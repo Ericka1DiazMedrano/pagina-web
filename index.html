@@ -1,0 +1,3766 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="Portal interactivo y educativo de Cálculo Integral: Área entre las Funciones. Universidad Mariano Gálvez de Guatemala (UMG).">
+  <meta name="author" content="Zoila Ericka Amanda Díaz Medrano">
+  <title>Área entre Funciones | Cálculo Integral - UMG</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <!-- KaTeX for high-performance math typesetting -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+  <!-- Math.js for safe symbolic & numerical parsing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.1/math.js"></script>
+
+  <!-- GSAP for smooth micro-animations -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    /* ==========================================================================
+       UMG DESIGN SYSTEM TOKENS & BASE STYLING
+       ========================================================================== */
+    :root {
+      /* UMG Official Colors */
+      --umg-navy: #002B49;
+      --umg-navy-dark: #001C31;
+      --umg-navy-light: #0A3C63;
+      --umg-crimson: #A6192E;
+      --umg-crimson-hover: #8B1224;
+      --umg-crimson-subtle: rgba(166, 25, 46, 0.08);
+      --umg-gold: #D4AF37;
+      --umg-gold-light: #F3E5AB;
+      --umg-gold-dark: #AA820A;
+      --umg-gold-glow: rgba(212, 175, 55, 0.35);
+
+      /* Neutrals & Surfaces */
+      --bg-page: #F8F9FA;
+      --bg-surface: #FFFFFF;
+      --bg-surface-elevated: #FFFFFF;
+      --bg-surface-glass: rgba(255, 255, 255, 0.88);
+      --border-color: #E2E8F0;
+      --border-subtle: #EDF2F7;
+      --text-main: #1E293B;
+      --text-muted: #64748B;
+      --text-heading: #002B49;
+
+      /* Curves Colors for Plotter */
+      --color-fx: #002B49;
+      --color-gx: #A6192E;
+      --color-shaded: rgba(212, 175, 55, 0.28);
+      --color-grid: #E2E8F0;
+      --color-axis: #475569;
+
+      /* UI Controls */
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-xl: 28px;
+      --shadow-sm: 0 2px 4px rgba(0, 43, 73, 0.04);
+      --shadow-md: 0 8px 20px -4px rgba(0, 43, 73, 0.08);
+      --shadow-lg: 0 16px 36px -6px rgba(0, 43, 73, 0.14);
+      --shadow-gold: 0 6px 20px rgba(212, 175, 55, 0.25);
+
+      /* Typography */
+      --font-display: 'Cinzel', serif;
+      --font-heading: 'Outfit', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    [data-theme="dark"] {
+      --bg-page: #0B111A;
+      --bg-surface: #121A26;
+      --bg-surface-elevated: #182435;
+      --bg-surface-glass: rgba(18, 26, 38, 0.88);
+      --border-color: #23344A;
+      --border-subtle: #1C2B3E;
+      --text-main: #E2E8F0;
+      --text-muted: #94A3B8;
+      --text-heading: #F8FAFC;
+      --color-grid: #1C2B3E;
+      --color-axis: #64748B;
+      --color-fx: #38BDF8;
+      --color-gx: #F43F5E;
+      --color-shaded: rgba(212, 175, 55, 0.35);
+      --shadow-md: 0 8px 24px -4px rgba(0, 0, 0, 0.45);
+      --shadow-lg: 0 16px 40px -6px rgba(0, 0, 0, 0.6);
+    }
+
+    /* Universal Reset & Typography */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.65;
+      overflow-x: hidden;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5 {
+      font-family: var(--font-heading);
+      color: var(--text-heading);
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* ==========================================================================
+       NAVBAR (Glassmorphic & Responsive)
+       ========================================================================== */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--bg-surface-glass);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-color);
+      transition: all 0.3s ease;
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 72px;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 1.125rem;
+    }
+
+    .nav-badge-pill {
+      background: var(--umg-navy);
+      color: white;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      border: 1px solid var(--umg-gold);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      list-style: none;
+    }
+
+    .nav-link {
+      font-size: 0.925rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      transition: color 0.2s ease;
+      position: relative;
+      padding: 4px 0;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      color: var(--umg-crimson);
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0%;
+      height: 2px;
+      background: var(--umg-crimson);
+      transition: width 0.25s ease;
+      border-radius: 2px;
+    }
+
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-icon:hover {
+      background: var(--border-subtle);
+      border-color: var(--umg-gold);
+      transform: translateY(-1px);
+    }
+
+    /* Mobile Menu */
+    .mobile-menu-btn {
+      display: none;
+    }
+
+    @media (max-width: 900px) {
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 72px;
+        left: 0;
+        width: 100%;
+        background: var(--bg-surface);
+        flex-direction: column;
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .nav-links.show {
+        display: flex;
+      }
+
+      .mobile-menu-btn {
+        display: inline-flex;
+      }
+    }
+
+    /* ==========================================================================
+       HERO & DIPLOMA INSTITUCIONAL (Carátula UMG)
+       ========================================================================== */
+    .hero-section {
+      position: relative;
+      padding: 4.5rem 0 3.5rem;
+      background: linear-gradient(135deg, var(--umg-navy) 0%, var(--umg-navy-dark) 60%, #001020 100%);
+      color: white;
+      overflow: hidden;
+      border-bottom: 4px solid var(--umg-gold);
+    }
+
+    .hero-pattern {
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 20% 30%, rgba(212, 175, 55, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(166, 25, 46, 0.2) 0%, transparent 50%),
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+
+    .diploma-card {
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      border-radius: var(--radius-xl);
+      padding: 2.75rem 2.25rem;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .diploma-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--umg-crimson), var(--umg-gold), var(--umg-crimson));
+    }
+
+    .diploma-header {
+      display: flex;
+      align-items: center;
+      gap: 1.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      padding-bottom: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .umg-crest {
+      flex-shrink: 0;
+      width: 100px;
+      height: 100px;
+      background: radial-gradient(circle, #FFFFFF 0%, #F1F5F9 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px;
+      border: 3px solid var(--umg-gold);
+      box-shadow: 0 8px 24px rgba(212, 175, 55, 0.35);
+    }
+
+    .crest-svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .diploma-titles h4 {
+      font-family: var(--font-display);
+      color: var(--umg-gold);
+      font-size: 1.15rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .diploma-titles h1 {
+      font-size: 2.4rem;
+      color: #FFFFFF;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .diploma-titles p {
+      color: #CBD5E1;
+      font-size: 1.05rem;
+      font-weight: 400;
+    }
+
+    .diploma-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      background: rgba(0, 0, 0, 0.22);
+      padding: 1.5rem;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .info-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--umg-gold);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .info-val {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #FFFFFF;
+    }
+
+    .hero-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 2rem;
+    }
+
+    .hero-pill-btn {
+      background: rgba(255, 255, 255, 0.08);
+      color: #FFFFFF;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      padding: 9px 18px;
+      border-radius: 999px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.25s ease;
+    }
+
+    .hero-pill-btn:hover {
+      background: var(--umg-gold);
+      color: var(--umg-navy-dark);
+      border-color: var(--umg-gold);
+      box-shadow: var(--shadow-gold);
+      transform: translateY(-2px);
+    }
+
+    /* ==========================================================================
+       SECTION COMMON STYLES
+       ========================================================================== */
+    .section {
+      padding: 5rem 0;
+    }
+
+    .section-alt {
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .section-header {
+      text-align: center;
+      max-width: 760px;
+      margin: 0 auto 3.5rem;
+    }
+
+    .badge-sub {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--umg-crimson-subtle);
+      color: var(--umg-crimson);
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+      border: 1px solid rgba(166, 25, 46, 0.18);
+    }
+
+    .section-title {
+      font-size: 2.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .section-desc {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+
+    /* ==========================================================================
+       MARCO TEÓRICO
+       ========================================================================== */
+    .theory-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .theory-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      box-shadow: var(--shadow-md);
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .theory-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--umg-gold);
+    }
+
+    .theory-icon-box {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-sm);
+      background: var(--umg-crimson-subtle);
+      color: var(--umg-crimson);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .theory-card h3 {
+      font-size: 1.35rem;
+      margin-bottom: 0.85rem;
+      color: var(--text-heading);
+    }
+
+    .formula-box {
+      background: var(--bg-page);
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--umg-crimson);
+      border-radius: var(--radius-sm);
+      padding: 1.25rem;
+      margin: 1.25rem 0;
+      text-align: center;
+      overflow-x: auto;
+    }
+
+    /* Steps Procedure List */
+    .steps-container {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: 2.5rem;
+      box-shadow: var(--shadow-md);
+      margin-top: 2rem;
+    }
+
+    .steps-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.75rem;
+      position: relative;
+    }
+
+    .step-item {
+      background: var(--bg-page);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      position: relative;
+      transition: all 0.25s ease;
+    }
+
+    .step-item:hover {
+      border-color: var(--umg-navy);
+      transform: translateY(-2px);
+    }
+
+    .step-num {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--umg-navy);
+      color: var(--umg-gold);
+      font-weight: 800;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+      border: 2px solid var(--umg-gold);
+    }
+
+    .step-title {
+      font-weight: 700;
+      font-size: 1.05rem;
+      margin-bottom: 0.5rem;
+      color: var(--text-heading);
+    }
+
+    .step-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    /* Tabbed Comparison: dx vs dy */
+    .compare-container {
+      margin-top: 3.5rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+    }
+
+    .compare-tabs {
+      display: flex;
+      background: var(--bg-page);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .compare-tab {
+      flex: 1;
+      padding: 1.25rem 1.5rem;
+      font-weight: 700;
+      font-size: 1.05rem;
+      text-align: center;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .compare-tab.active {
+      color: var(--umg-navy);
+      background: var(--bg-surface);
+      border-bottom: 3px solid var(--umg-crimson);
+    }
+
+    .compare-content {
+      padding: 2.5rem;
+      display: none;
+    }
+
+    .compare-content.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+      align-items: center;
+    }
+
+    @media (max-width: 820px) {
+      .compare-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .schematic-box {
+      background: var(--bg-page);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ==========================================================================
+       CALCULADORA & GRAFICADOR INTERACTIVO
+       ========================================================================== */
+    .calc-layout {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    @media (max-width: 1040px) {
+      .calc-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .calc-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: 2rem;
+      box-shadow: var(--shadow-md);
+    }
+
+    .preset-pill-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 1.5rem;
+    }
+
+    .preset-btn {
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background: var(--bg-page);
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .preset-btn:hover {
+      background: var(--umg-navy);
+      color: white;
+      border-color: var(--umg-navy);
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text-heading);
+    }
+
+    .badge-curve {
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-weight: 700;
+      color: white;
+    }
+
+    .badge-f {
+      background: var(--umg-navy);
+    }
+
+    .badge-g {
+      background: var(--umg-crimson);
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .calc-input {
+      width: 100%;
+      padding: 12px 14px;
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      background: var(--bg-page);
+      color: var(--text-main);
+      transition: all 0.2s ease;
+    }
+
+    .calc-input:focus {
+      outline: none;
+      border-color: var(--umg-gold);
+      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+      background: var(--bg-surface);
+    }
+
+    .limits-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .btn-calc {
+      width: 100%;
+      padding: 14px 20px;
+      background: linear-gradient(135deg, var(--umg-navy) 0%, var(--umg-navy-light) 100%);
+      color: white;
+      border: 1px solid var(--umg-gold);
+      border-radius: var(--radius-md);
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.25s ease;
+      margin-top: 1.5rem;
+    }
+
+    .btn-calc:hover {
+      background: linear-gradient(135deg, var(--umg-navy-light) 0%, var(--umg-navy) 100%);
+      box-shadow: var(--shadow-gold);
+      transform: translateY(-2px);
+    }
+
+    .btn-detect {
+      width: 100%;
+      padding: 10px;
+      background: transparent;
+      border: 1px dashed var(--umg-crimson);
+      color: var(--umg-crimson);
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-detect:hover {
+      background: var(--umg-crimson-subtle);
+    }
+
+    /* Result Box */
+    .result-card {
+      margin-top: 1.75rem;
+      padding: 1.5rem;
+      background: linear-gradient(135deg, rgba(0, 43, 73, 0.04) 0%, rgba(212, 175, 55, 0.08) 100%);
+      border: 1px solid var(--umg-gold);
+      border-radius: var(--radius-md);
+      text-align: center;
+    }
+
+    .result-val {
+      font-size: 2.25rem;
+      font-weight: 800;
+      color: var(--umg-navy);
+      font-family: var(--font-heading);
+      margin: 8px 0;
+    }
+
+    [data-theme="dark"] .result-val {
+      color: var(--umg-gold);
+    }
+
+    .result-meta {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Plotter Canvas & Controls */
+    .plotter-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: 1.75rem;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .plotter-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 1rem;
+      padding-bottom: 0.85rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .plotter-legend {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .legend-tag {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-color-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .plotter-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .canvas-container {
+      position: relative;
+      width: 100%;
+      height: 520px;
+      background: var(--bg-page);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      cursor: crosshair;
+    }
+
+    #mathCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .canvas-tooltip {
+      position: absolute;
+      display: none;
+      background: rgba(0, 27, 49, 0.92);
+      color: white;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      pointer-events: none;
+      z-index: 10;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--umg-gold);
+    }
+
+    /* ==========================================================================
+       EJEMPLOS RESUELTOS (Acordeones interactivos)
+       ========================================================================== */
+    .accordion-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .accordion-item {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.25s ease;
+    }
+
+    .accordion-item:hover {
+      border-color: var(--umg-gold);
+    }
+
+    .accordion-header {
+      width: 100%;
+      padding: 1.5rem 2rem;
+      background: transparent;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .accordion-title-box {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .accordion-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--umg-navy);
+      color: var(--umg-gold);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+    }
+
+    .accordion-h3 {
+      font-size: 1.25rem;
+      color: var(--text-heading);
+    }
+
+    .accordion-chevron {
+      color: var(--text-muted);
+      transition: transform 0.3s ease;
+    }
+
+    .accordion-item.open .accordion-chevron {
+      transform: rotate(180deg);
+      color: var(--umg-crimson);
+    }
+
+    .accordion-body {
+      display: none;
+      padding: 0 2rem 2rem;
+      border-top: 1px solid var(--border-color);
+      background: var(--bg-surface);
+    }
+
+    .accordion-item.open .accordion-body {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .solution-step {
+      margin-top: 1.25rem;
+      padding: 1.25rem;
+      background: var(--bg-page);
+      border-radius: var(--radius-md);
+      border-left: 3px solid var(--umg-navy);
+    }
+
+    .solution-step h5 {
+      color: var(--umg-navy);
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    [data-theme="dark"] .solution-step h5 {
+      color: var(--umg-gold);
+    }
+
+    .btn-load-example {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 1.5rem;
+      padding: 10px 18px;
+      background: var(--umg-navy);
+      color: white;
+      border: 1px solid var(--umg-gold);
+      border-radius: var(--radius-sm);
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-load-example:hover {
+      background: var(--umg-navy-light);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-gold);
+    }
+
+    /* ==========================================================================
+       QUIZ EVALUATIVO
+       ========================================================================== */
+    .quiz-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: 2.75rem 2.25rem;
+      box-shadow: var(--shadow-lg);
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .quiz-progress-bar {
+      height: 8px;
+      background: var(--border-color);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+
+    .quiz-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--umg-crimson), var(--umg-gold));
+      transition: width 0.3s ease;
+    }
+
+    .quiz-question-box {
+      display: none;
+    }
+
+    .quiz-question-box.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .quiz-question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .quiz-badge {
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--umg-crimson);
+      text-transform: uppercase;
+    }
+
+    .quiz-q-title {
+      font-size: 1.35rem;
+      margin-bottom: 1.5rem;
+      color: var(--text-heading);
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 1.75rem;
+    }
+
+    .quiz-opt {
+      padding: 14px 18px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-page);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.2s ease;
+    }
+
+    .quiz-opt:hover {
+      border-color: var(--umg-navy);
+      background: var(--bg-surface);
+      transform: translateX(4px);
+    }
+
+    .quiz-opt.selected {
+      border-color: var(--umg-navy);
+      background: rgba(0, 43, 73, 0.08);
+      font-weight: 600;
+    }
+
+    .quiz-opt.correct {
+      border-color: #10B981 !important;
+      background: rgba(16, 185, 129, 0.12) !important;
+      color: #065F46;
+    }
+
+    .quiz-opt.incorrect {
+      border-color: #EF4444 !important;
+      background: rgba(239, 68, 68, 0.12) !important;
+      color: #991B1B;
+    }
+
+    .quiz-feedback {
+      display: none;
+      padding: 1.25rem;
+      border-radius: var(--radius-md);
+      margin-bottom: 1.5rem;
+      font-size: 0.95rem;
+    }
+
+    .quiz-feedback.show {
+      display: block;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .quiz-feedback.success {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid #10B981;
+      color: #065F46;
+    }
+
+    .quiz-feedback.error {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid #EF4444;
+      color: #991B1B;
+    }
+
+    [data-theme="dark"] .quiz-feedback.success {
+      color: #A7F3D0;
+    }
+
+    [data-theme="dark"] .quiz-feedback.error {
+      color: #FECACA;
+    }
+
+    .quiz-nav-btns {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .btn-secondary {
+      padding: 10px 20px;
+      background: var(--bg-page);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      color: var(--text-main);
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      padding: 12px 24px;
+      background: var(--umg-navy);
+      color: white;
+      border: 1px solid var(--umg-gold);
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary:hover {
+      background: var(--umg-crimson);
+      border-color: var(--umg-crimson);
+      transform: translateY(-1px);
+    }
+
+    /* Final Result Screen */
+    .quiz-final-screen {
+      display: none;
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+
+    .quiz-score-circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 4px solid var(--umg-gold);
+      background: var(--umg-navy);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      box-shadow: var(--shadow-gold);
+    }
+
+    .quiz-score-num {
+      font-size: 2.25rem;
+      font-weight: 800;
+      font-family: var(--font-heading);
+      line-height: 1;
+    }
+
+    /* ==========================================================================
+       FORMULARIO / CHEATSHEET
+       ========================================================================== */
+    .cheatsheet-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .cheat-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .cheat-card h4 {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--umg-navy);
+      font-size: 1.15rem;
+      margin-bottom: 1.25rem;
+      border-bottom: 2px solid var(--umg-gold);
+      padding-bottom: 8px;
+    }
+
+    [data-theme="dark"] .cheat-card h4 {
+      color: var(--umg-gold);
+    }
+
+    .formula-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px dashed var(--border-color);
+      font-size: 0.95rem;
+    }
+
+    .formula-row:last-child {
+      border-bottom: none;
+    }
+
+    /* ==========================================================================
+       FOOTER
+       ========================================================================== */
+    .footer {
+      background: var(--umg-navy-dark);
+      color: #94A3B8;
+      padding: 3.5rem 0 2rem;
+      border-top: 3px solid var(--umg-gold);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 3rem;
+      margin-bottom: 2.5rem;
+    }
+
+    @media (max-width: 820px) {
+      .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+    }
+
+    .footer h5 {
+      color: #FFFFFF;
+      font-size: 1.05rem;
+      margin-bottom: 1rem;
+    }
+
+    .footer-quote {
+      font-family: var(--font-display);
+      color: var(--umg-gold);
+      font-style: italic;
+      margin-top: 12px;
+      font-size: 0.9rem;
+    }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 1.5rem;
+      text-align: center;
+      font-size: 0.85rem;
+    }
+
+    /* ==========================================================================
+       MATERIAL AUDIOVISUAL / REPRODUCTOR DE VIDEO
+       ========================================================================== */
+    .audiovisual-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .audiovisual-card:hover {
+      border-color: rgba(212, 175, 55, 0.4);
+      box-shadow: 0 20px 45px -10px rgba(0, 43, 73, 0.18);
+    }
+
+    .audiovisual-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.15rem 1.75rem;
+      background: var(--bg-surface-elevated);
+      border-bottom: 1px solid var(--border-color);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .audiovisual-title-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      color: var(--text-heading);
+      font-family: var(--font-heading);
+      font-size: 1.05rem;
+    }
+
+    .audiovisual-title-badge i {
+      color: var(--umg-crimson);
+      width: 22px;
+      height: 22px;
+    }
+
+    .audiovisual-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 5px 14px;
+      border-radius: 999px;
+      background: var(--bg-page);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      transition: all 0.3s ease;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    .status-searching {
+      background: #f59e0b;
+      box-shadow: 0 0 8px rgba(245, 158, 11, 0.6);
+      animation: statusPulse 1.8s infinite;
+    }
+
+    .status-ready {
+      background: #10b981;
+      box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+    }
+
+    .status-error {
+      background: #ef4444;
+      box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+    }
+
+    @keyframes statusPulse {
+      0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 0.4;
+        transform: scale(1.2);
+      }
+    }
+
+    .video-wrapper {
+      position: relative;
+      width: 100%;
+      background: #000000;
+      aspect-ratio: 16 / 9;
+      max-height: 600px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .video-wrapper video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      background: #000000;
+    }
+
+    .video-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0, 27, 49, 0.95) 0%, rgba(0, 16, 32, 0.97) 100%);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+      z-index: 10;
+      transition: opacity 0.35s ease, visibility 0.35s ease;
+    }
+
+    .video-overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .video-overlay-content {
+      max-width: 600px;
+      color: white;
+      animation: fadeInOverlay 0.4s ease;
+    }
+
+    @keyframes fadeInOverlay {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .video-empty-icon {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      background: rgba(212, 175, 55, 0.15);
+      border: 2px solid var(--umg-gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.25rem;
+      color: var(--umg-gold);
+      box-shadow: 0 0 25px rgba(212, 175, 55, 0.3);
+    }
+
+    .video-empty-icon i {
+      width: 38px;
+      height: 38px;
+    }
+
+    .video-overlay-content h3 {
+      font-size: 1.55rem;
+      color: #FFFFFF;
+      margin-bottom: 0.75rem;
+      font-family: var(--font-heading);
+    }
+
+    .video-overlay-content p {
+      font-size: 0.95rem;
+      color: #CBD5E1;
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .video-overlay-actions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 1.25rem;
+    }
+
+    .video-format-hint {
+      font-size: 0.825rem;
+      color: #94A3B8;
+    }
+
+    .video-format-hint code {
+      background: rgba(255, 255, 255, 0.12);
+      color: var(--umg-gold);
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+    }
+
+    .video-controls-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.75rem;
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border-color);
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .video-controls-left,
+    .video-controls-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .speed-selector-group {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-page);
+      border: 1px solid var(--border-color);
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+    }
+
+    .speed-btn {
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: var(--font-mono);
+    }
+
+    .speed-btn:hover {
+      color: var(--text-heading);
+      background: var(--border-subtle);
+    }
+
+    .speed-btn.active {
+      background: var(--umg-navy);
+      color: #FFFFFF;
+    }
+
+    [data-theme="dark"] .speed-btn.active {
+      background: var(--umg-crimson);
+      color: #FFFFFF;
+    }
+
+    .audiovisual-info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      padding: 1.75rem;
+      background: var(--bg-page);
+      border-top: 1px solid var(--border-color);
+    }
+
+    .video-info-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1.35rem 1.5rem;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .video-info-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--umg-gold);
+    }
+
+    .video-info-card.guide-card {
+      border-left: 4px solid var(--umg-gold);
+    }
+
+    .info-card-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 0.9rem;
+    }
+
+    .info-card-header h4 {
+      font-size: 1.05rem;
+      margin: 0;
+    }
+
+    .video-info-list {
+      list-style: none;
+      font-size: 0.875rem;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      color: var(--text-main);
+    }
+
+    .video-info-list li {
+      line-height: 1.55;
+    }
+
+    /* Print Styles */
+    @media print {
+
+      .navbar,
+      .btn-icon,
+      .plotter-toolbar,
+      .hero-pills,
+      .btn-calc,
+      .btn-detect,
+      .btn-load-example,
+      .quiz-nav-btns {
+        display: none !important;
+      }
+
+      body {
+        background: white !important;
+        color: black !important;
+      }
+
+      .diploma-card {
+        border: 2px solid black !important;
+        color: black !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ==========================================================================
+       BARRA DE NAVEGACIÓN
+       ========================================================================== -->
+  <header class="navbar">
+    <div class="container nav-inner">
+      <div class="nav-brand">
+        <!-- Mini Escudo SVG UMG -->
+        <svg width="34" height="34" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="48" fill="#002B49" stroke="#D4AF37" stroke-width="4" />
+          <path d="M50 16 L56 30 L72 32 L60 44 L64 60 L50 52 L36 60 L40 44 L28 32 L44 30 Z" fill="#D4AF37" />
+          <path d="M30 65 Q50 78 70 65 L70 75 Q50 88 30 75 Z" fill="#A6192E" />
+        </svg>
+        <span>UMG <span style="color:var(--umg-crimson)">Cálculo</span></span>
+        <span class="nav-badge-pill">2026</span>
+      </div>
+
+      <nav>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="#inicio" class="nav-link active">Inicio</a></li>
+          <li><a href="#teoria" class="nav-link">Marco Teórico</a></li>
+          <li><a href="#calculadora" class="nav-link">Calculadora</a></li>
+          <li><a href="#ejemplos" class="nav-link">Ejemplos</a></li>
+          <li><a href="#quiz" class="nav-link">Cuestionario</a></li>
+          <li><a href="#formulario" class="nav-link">Formulario</a></li>
+          <li><a href="#audiovisual" class="nav-link">Material Audiovisual</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="btn-icon" id="themeToggle" title="Cambiar Tema (Oscuro/Claro)" aria-label="Cambiar Tema">
+          <i data-lucide="moon" id="themeIcon"></i>
+        </button>
+        <button class="btn-icon" onclick="window.print()" title="Imprimir / Exportar a PDF" aria-label="Imprimir">
+          <i data-lucide="printer"></i>
+        </button>
+        <button class="btn-icon mobile-menu-btn" id="mobileMenuToggle" aria-label="Abrir Menú">
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       1. CARÁTULA E INTRODUCCIÓN INSTITUCIONAL
+       ========================================================================== -->
+  <section class="hero-section" id="inicio">
+    <div class="hero-pattern"></div>
+    <div class="container hero-content">
+      <div class="diploma-card">
+        <div class="diploma-header">
+          <!-- Escudo Vectorial UMG Oficial -->
+          <div class="umg-crest">
+            <svg class="crest-svg" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="60" cy="60" r="56" fill="#002B49" stroke="#D4AF37" stroke-width="4" />
+              <!-- Marian Cross & Star -->
+              <path d="M60 20 L60 90 M36 44 L84 44" stroke="#D4AF37" stroke-width="5" stroke-linecap="round" />
+              <circle cx="60" cy="44" r="8" fill="#A6192E" stroke="#D4AF37" stroke-width="2" />
+              <!-- Open Book -->
+              <path d="M40 76 Q60 68 60 84 Q60 68 80 76 L80 94 Q60 86 60 102 Q60 86 40 94 Z" fill="#FFFFFF"
+                stroke="#002B49" stroke-width="2" />
+              <text x="60" y="112" font-family="'Cinzel', serif" font-size="8" fill="#D4AF37" text-anchor="middle"
+                font-weight="700">1966</text>
+            </svg>
+          </div>
+
+          <div class="diploma-titles">
+            <h4>Universidad Mariano Gálvez de Guatemala</h4>
+            <h1>Área entre las Funciones</h1>
+            <p>Aplicaciones de la Integral Definida • Cálculo Integral</p>
+          </div>
+        </div>
+
+        <div class="diploma-grid">
+          <div class="info-item">
+            <span class="info-label"><i data-lucide="book-open" style="width:14px;height:14px;"></i> Curso</span>
+            <span class="info-val">Cálculo</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label"><i data-lucide="user-check" style="width:14px;height:14px;"></i> Catedrático</span>
+            <span class="info-val">Lic. Juan Francisco Culajay Gaitán</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label"><i data-lucide="graduation-cap" style="width:14px;height:14px;"></i>
+              Estudiante</span>
+            <span class="info-val">Zoila Ericka Amanda Díaz Medrano</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label"><i data-lucide="award" style="width:14px;height:14px;"></i> Tipo de Entrega</span>
+            <span class="info-val">Proyecto Interactivo Universitario</span>
+          </div>
+        </div>
+
+        <div class="hero-pills">
+          <a href="#teoria" class="hero-pill-btn"><i data-lucide="book-marked"></i> Fundamento Teórico</a>
+          <a href="#calculadora" class="hero-pill-btn"><i data-lucide="calculator"></i> Calculadora & Graficador</a>
+          <a href="#ejemplos" class="hero-pill-btn"><i data-lucide="check-circle-2"></i> Ejemplos Resueltos</a>
+          <a href="#quiz" class="hero-pill-btn"><i data-lucide="help-circle"></i> Evaluación Interactiva</a>
+          <a href="#formulario" class="hero-pill-btn"><i data-lucide="file-text"></i> Formulario Matemático</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       2. MARCO TEÓRICO COMPLETO
+       ========================================================================== -->
+  <section class="section" id="teoria">
+    <div class="container">
+      <div class="section-header">
+        <span class="badge-sub"><i data-lucide="library"></i> Fundamento Matemático</span>
+        <h2 class="section-title">Concepto y Definición Formal</h2>
+        <p class="section-desc">El cálculo del área entre dos curvas es una extensión directa de las Sumas de Riemann y
+          el Teorema Fundamental del Cálculo.</p>
+      </div>
+
+      <div class="theory-grid">
+        <!-- Card 1: Definición Principal -->
+        <div class="theory-card">
+          <div class="theory-icon-box">
+            <i data-lucide="sigma"></i>
+          </div>
+          <h3>Definición Fundamental</h3>
+          <p>Sean $f$ y $g$ funciones continuas en el intervalo $[a, b]$, tales que $f(x) \ge g(x)$ para todo $x \in [a,
+            b]$. El área $A$ de la región acotada por las gráficas de $f$, $g$ y las rectas verticales $x = a$ y $x = b$
+            se define como:</p>
+          <div class="formula-box">
+            $$A = \int_{a}^{b} [f(x) - g(x)] \, dx$$
+          </div>
+          <p style="font-size:0.9rem; color:var(--text-muted)">
+            Donde $f(x)$ representa la <strong>función techo (superior)</strong> y $g(x)$ la <strong>función piso
+              (inferior)</strong>.
+          </p>
+        </div>
+
+        <!-- Card 2: Valor Absoluto y Cruce de Curvas -->
+        <div class="theory-card">
+          <div class="theory-icon-box">
+            <i data-lucide="split"></i>
+          </div>
+          <h3>Curvas que se Cruzan</h3>
+          <p>Si las gráficas se intersecan en uno o más puntos dentro de $[a, b]$, la función superior y la inferior
+            alternan su posición. En tal caso, la fórmula general con valor absoluto es:</p>
+          <div class="formula-box">
+            $$A = \int_{a}^{b} |f(x) - g(x)| \, dx$$
+          </div>
+          <p style="font-size:0.9rem; color:var(--text-muted)">
+            Para resolverla manualmente, se hallan los puntos de intersección $c_i$ y se divide la integral en
+            subintervalos donde la diferencia conserve signo constante.
+          </p>
+        </div>
+
+        <!-- Card 3: Teorema Fundamental del Cálculo -->
+        <div class="theory-card">
+          <div class="theory-icon-box">
+            <i data-lucide="variable"></i>
+          </div>
+          <h3>Evaluación de la Integral</h3>
+          <p>Por la Segunda Parte del Teorema Fundamental del Cálculo, si $H(x)$ es una antiderivada de $h(x) = f(x) -
+            g(x)$, entonces:</p>
+          <div class="formula-box">
+            $$A = \Big[ H(x) \Big]_{a}^{b} = H(b) - H(a)$$
+          </div>
+          <p style="font-size:0.9rem; color:var(--text-muted)">
+            El resultado obtenido siempre debe ser estrictamente positivo ($A > 0$) y se expresa en unidades cuadradas
+            ($u^2$).
+          </p>
+        </div>
+      </div>
+
+      <!-- Procedimiento en 5 Pasos -->
+      <div class="steps-container">
+        <h3 style="font-size:1.5rem; text-align:center; color:var(--text-heading);">
+          Procedimiento Metodológico de Resolución (5 Pasos)
+        </h3>
+        <p style="text-align:center; color:var(--text-muted); font-size:0.95rem; margin-top:4px;">
+          Metodología sistemática para abordar cualquier problema de área en Cálculo Integral.
+        </p>
+
+        <div class="steps-list">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-title">Graficar las Curvas</div>
+            <p class="step-desc">Esbozar ambas funciones para identificar visualmente la región cerrada y su
+              comportamiento relativo.</p>
+          </div>
+
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-title">Hallar Intersecciones</div>
+            <p class="step-desc">Resolver la ecuación algebraica $f(x) = g(x) \implies f(x) - g(x) = 0$ para encontrar
+              los límites $a$ y $b$.</p>
+          </div>
+
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div class="step-title">Determinar Techo y Piso</div>
+            <p class="step-desc">Evaluar un valor de prueba $x_0 \in (a, b)$ en ambas funciones para verificar cuál es
+              mayor: $f(x_0) > g(x_0)$.</p>
+          </div>
+
+          <div class="step-item">
+            <div class="step-num">4</div>
+            <div class="step-title">Plantear la Integral</div>
+            <p class="step-desc">Escribir la integral definida $A = \int_a^b [y_{\text{arriba}} - y_{\text{abajo}}] \,
+              dx$ restando la curva inferior.</p>
+          </div>
+
+          <div class="step-item">
+            <div class="step-num">5</div>
+            <div class="step-title">Integrar y Evaluar</div>
+            <p class="step-desc">Calcular la primitiva, aplicar la regla de Barrow $F(b) - F(a)$ y colocar las unidades
+              cuadradas ($u^2$).</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comparativa Franja Vertical (dx) vs Franja Horizontal (dy) -->
+      <div class="compare-container">
+        <div class="compare-tabs">
+          <button class="compare-tab active" onclick="switchTab('dx')">
+            <i data-lucide="columns-2"></i> Método 1: Franjas Verticales ($dx$)
+          </button>
+          <button class="compare-tab" onclick="switchTab('dy')">
+            <i data-lucide="rows-2"></i> Método 2: Franjas Horizontales ($dy$)
+          </button>
+        </div>
+
+        <!-- Tab 1: dx -->
+        <div class="compare-content active" id="tab-dx">
+          <div class="compare-grid">
+            <div>
+              <span class="badge-sub" style="background:rgba(0,43,73,0.1); color:var(--umg-navy)">Integración respecto a
+                X</span>
+              <h3 style="margin: 8px 0 12px; font-size:1.5rem;">Rectángulos Verticales de Ancho $dx$</h3>
+              <p>Es el método más habitual cuando las curvas vienen expresadas en la forma explícita $y = f(x)$ e $y =
+                g(x)$.</p>
+
+              <ul style="margin: 1rem 0 1.5rem 1.25rem; font-size:0.95rem; color:var(--text-main);">
+                <li><strong>Elemento diferencial:</strong> $dA = [f(x) - g(x)] \, dx$</li>
+                <li><strong>Altura del rectángulo:</strong> $h = y_{\text{arriba}} - y_{\text{abajo}}$</li>
+                <li><strong>Base del rectángulo:</strong> $\Delta x \to dx$</li>
+                <li><strong>Límites:</strong> Medidos sobre el eje horizontal $X$, desde $x = a$ hasta $x = b$.</li>
+              </ul>
+
+              <div class="formula-box">
+                $$A = \int_{a}^{b} \Big[ y_{\text{superior}}(x) - y_{\text{inferior}}(x) \Big] \, dx$$
+              </div>
+            </div>
+
+            <div class="schematic-box">
+              <!-- Esquema SVG dx -->
+              <svg viewBox="0 0 320 220" width="100%" height="200" xmlns="http://www.w3.org/2000/svg">
+                <!-- Ejes -->
+                <line x1="30" y1="190" x2="300" y2="190" stroke="#94A3B8" stroke-width="2" />
+                <line x1="40" y1="200" x2="40" y2="20" stroke="#94A3B8" stroke-width="2" />
+                <text x="295" y="205" font-size="12" fill="#64748B">x</text>
+                <text x="25" y="25" font-size="12" fill="#64748B">y</text>
+
+                <!-- Curvas -->
+                <!-- f(x) arriba -->
+                <path d="M 60 150 Q 160 30 260 130" fill="none" stroke="#002B49" stroke-width="3" />
+                <text x="180" y="45" font-size="12" fill="#002B49" font-weight="700">y = f(x)</text>
+
+                <!-- g(x) abajo -->
+                <path d="M 60 150 Q 160 180 260 130" fill="none" stroke="#A6192E" stroke-width="3" />
+                <text x="180" y="185" font-size="12" fill="#A6192E" font-weight="700">y = g(x)</text>
+
+                <!-- Área sombreada -->
+                <path d="M 60 150 Q 160 30 260 130 Q 160 180 60 150 Z" fill="rgba(212, 175, 55, 0.25)" stroke="none" />
+
+                <!-- Rectángulo diferencial dx -->
+                <rect x="145" y="70" width="16" height="85" fill="rgba(166, 25, 46, 0.45)" stroke="#A6192E"
+                  stroke-dasharray="2 2" />
+                <line x1="145" y1="190" x2="145" y2="198" stroke="#002B49" stroke-width="2" />
+                <line x1="161" y1="190" x2="161" y2="198" stroke="#002B49" stroke-width="2" />
+                <text x="146" y="210" font-size="11" fill="#002B49" font-weight="700">dx</text>
+                <text x="166" y="115" font-size="11" fill="#A6192E" font-weight="700">h = f(x)-g(x)</text>
+
+                <!-- Límites a y b -->
+                <circle cx="60" cy="150" r="4" fill="#D4AF37" />
+                <circle cx="260" cy="130" r="4" fill="#D4AF37" />
+                <text x="56" y="205" font-size="11" fill="#64748B">a</text>
+                <text x="256" y="205" font-size="11" fill="#64748B">b</text>
+              </svg>
+              <span style="font-size:0.8rem; color:var(--text-muted); margin-top:8px;">Figura 1: Franja vertical
+                diferencial con ancho infinitesimal $dx$.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: dy -->
+        <div class="compare-content" id="tab-dy">
+          <div class="compare-grid">
+            <div>
+              <span class="badge-sub" style="background:rgba(212,175,55,0.15); color:var(--umg-gold-dark)">Integración
+                respecto a Y</span>
+              <h3 style="margin: 8px 0 12px; font-size:1.5rem;">Rectángulos Horizontales de Altura $dy$</h3>
+              <p>Recomendado cuando las curvas son parábolas horizontales $x = w(y)$, $x = v(y)$ o cuando la curva
+                superior/inferior cambia abruptamente al integrar en $x$.</p>
+
+              <ul style="margin: 1rem 0 1.5rem 1.25rem; font-size:0.95rem; color:var(--text-main);">
+                <li><strong>Elemento diferencial:</strong> $dA = [x_{\text{derecha}} - x_{\text{izquierda}}] \, dy$</li>
+                <li><strong>Largo del rectángulo:</strong> $L = x_D(y) - x_I(y)$</li>
+                <li><strong>Grosor del rectángulo:</strong> $\Delta y \to dy$</li>
+                <li><strong>Límites:</strong> Medidos sobre el eje vertical $Y$, desde $y = c$ hasta $y = d$.</li>
+              </ul>
+
+              <div class="formula-box">
+                $$A = \int_{c}^{d} \Big[ x_{\text{derecha}}(y) - x_{\text{izquierda}}(y) \Big] \, dy$$
+              </div>
+            </div>
+
+            <div class="schematic-box">
+              <!-- Esquema SVG dy -->
+              <svg viewBox="0 0 320 220" width="100%" height="200" xmlns="http://www.w3.org/2000/svg">
+                <!-- Ejes -->
+                <line x1="30" y1="190" x2="300" y2="190" stroke="#94A3B8" stroke-width="2" />
+                <line x1="40" y1="200" x2="40" y2="20" stroke="#94A3B8" stroke-width="2" />
+                <text x="295" y="205" font-size="12" fill="#64748B">x</text>
+                <text x="25" y="25" font-size="12" fill="#64748B">y</text>
+
+                <!-- Curvas x = f(y) -->
+                <!-- x derecha -->
+                <path d="M 120 170 Q 250 110 140 40" fill="none" stroke="#002B49" stroke-width="3" />
+                <text x="220" y="100" font-size="11" fill="#002B49" font-weight="700">x = x_D(y)</text>
+
+                <!-- x izquierda -->
+                <path d="M 120 170 Q 70 110 140 40" fill="none" stroke="#A6192E" stroke-width="3" />
+                <text x="45" y="110" font-size="11" fill="#A6192E" font-weight="700">x = x_I(y)</text>
+
+                <!-- Área sombreada -->
+                <path d="M 120 170 Q 250 110 140 40 Q 70 110 120 170 Z" fill="rgba(212, 175, 55, 0.25)" stroke="none" />
+
+                <!-- Rectángulo diferencial dy -->
+                <rect x="85" y="95" width="125" height="14" fill="rgba(0, 43, 73, 0.45)" stroke="#002B49"
+                  stroke-dasharray="2 2" />
+                <line x1="32" y1="95" x2="40" y2="95" stroke="#A6192E" stroke-width="2" />
+                <line x1="32" y1="109" x2="40" y2="109" stroke="#A6192E" stroke-width="2" />
+                <text x="14" y="106" font-size="10" fill="#A6192E" font-weight="700">dy</text>
+                <text x="110" y="90" font-size="11" fill="#002B49" font-weight="700">L = x_D - x_I</text>
+
+                <!-- Límites c y d -->
+                <circle cx="120" cy="170" r="4" fill="#D4AF37" />
+                <circle cx="140" cy="40" r="4" fill="#D4AF37" />
+                <text x="105" y="175" font-size="11" fill="#64748B">c</text>
+                <text x="125" y="40" font-size="11" fill="#64748B">d</text>
+              </svg>
+              <span style="font-size:0.8rem; color:var(--text-muted); margin-top:8px;">Figura 2: Franja horizontal
+                diferencial con espesor infinitesimal $dy$.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       3. CALCULADORA & GRAFICADOR INTERACTIVO
+       ========================================================================== -->
+  <section class="section section-alt" id="calculadora">
+    <div class="container">
+      <div class="section-header">
+        <span class="badge-sub"><i data-lucide="calculator"></i> Laboratorio Numérico</span>
+        <h2 class="section-title">Calculadora y Graficador Interactivo</h2>
+        <p class="section-desc">Ingresa cualquier par de funciones para graficarlas en alta resolución, sombrear la
+          región de intersección y calcular numéricamente el área mediante la <strong>Regla de Simpson
+            compuesta</strong>.</p>
+      </div>
+
+      <div class="calc-layout">
+        <!-- Panel de Configuración -->
+        <div class="calc-panel">
+          <h4
+            style="margin-bottom:1rem; font-size:1.15rem; color:var(--text-heading); display:flex; align-items:center; gap:8px;">
+            <i data-lucide="sliders" style="color:var(--umg-crimson); width:20px;"></i> Parámetros de Entrada
+          </h4>
+
+          <!-- Presets -->
+          <label
+            style="font-size:0.8rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; display:block; margin-bottom:6px;">
+            Ejemplos Preconfigurados:
+          </label>
+          <div class="preset-pill-group">
+            <button class="preset-btn" onclick="applyPreset('4 - x^2', 'x + 2', -2, 1)">Parábola & Recta</button>
+            <button class="preset-btn" onclick="applyPreset('2 - x^2', 'x^2', -1, 1)">Dos Parábolas</button>
+            <button class="preset-btn" onclick="applyPreset('x^3 - 3*x', 'x', -2, 2)">Cúbica & Recta</button>
+            <button class="preset-btn" onclick="applyPreset('cos(x)', 'sin(x)', 0, 0.7854)">Trigonométrica</button>
+            <button class="preset-btn" onclick="applyPreset('4/x', '5 - x', 1, 4)">Racional & Recta</button>
+          </div>
+
+          <form id="calcForm" onsubmit="event.preventDefault(); computeArea();">
+            <!-- f(x) -->
+            <div class="form-group">
+              <label class="form-label" for="funcF">
+                <span>Función Superior / Techo $f(x)$:</span>
+                <span class="badge-curve badge-f">f(x) Azul</span>
+              </label>
+              <div class="input-wrapper">
+                <input type="text" id="funcF" class="calc-input" value="4 - x^2" placeholder="Ej: 4 - x^2, sin(x), etc."
+                  required>
+              </div>
+            </div>
+
+            <!-- g(x) -->
+            <div class="form-group">
+              <label class="form-label" for="funcG">
+                <span>Función Inferior / Piso $g(x)$:</span>
+                <span class="badge-curve badge-g">g(x) Rojo</span>
+              </label>
+              <div class="input-wrapper">
+                <input type="text" id="funcG" class="calc-input" value="x + 2" placeholder="Ej: x + 2, x^2, etc."
+                  required>
+              </div>
+            </div>
+
+            <!-- Límites a y b -->
+            <div class="limits-row">
+              <div class="form-group">
+                <label class="form-label" for="limitA">Límite $a$ (Inicio):</label>
+                <input type="number" id="limitA" class="calc-input" step="any" value="-2" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="limitB">Límite $b$ (Fin):</label>
+                <input type="number" id="limitB" class="calc-input" step="any" value="1" required>
+              </div>
+            </div>
+
+            <!-- Botón Detectar Intersecciones -->
+            <button type="button" class="btn-detect" onclick="detectIntersections()">
+              <i data-lucide="target" style="width:16px;"></i> Detectar Puntos de Intersección Automáticamente
+            </button>
+
+            <!-- Botón Principal Calcular -->
+            <button type="submit" class="btn-calc">
+              <i data-lucide="play-circle"></i> Graficar y Calcular Área
+            </button>
+          </form>
+
+          <!-- Tarjeta de Resultados -->
+          <div class="result-card">
+            <span
+              style="font-size:0.85rem; text-transform:uppercase; font-weight:700; color:var(--umg-crimson); letter-spacing:0.06em;">
+              Área Calculada (Regla de Simpson):
+            </span>
+            <div class="result-val" id="areaDisplay">4.5000 u²</div>
+            <div class="result-meta" id="resultDetails">
+              Intervalo: [-2.00, 1.00] • 1000 subintervalos de precisión
+            </div>
+          </div>
+        </div>
+
+        <!-- Canvas Gráfico Interactivo -->
+        <div class="plotter-card">
+          <div class="plotter-toolbar">
+            <div class="plotter-legend">
+              <div class="legend-tag">
+                <div class="legend-color-dot" style="background:var(--color-fx);"></div>
+                <span>$f(x)$</span>
+              </div>
+              <div class="legend-tag">
+                <div class="legend-color-dot" style="background:var(--color-gx);"></div>
+                <span>$g(x)$</span>
+              </div>
+              <div class="legend-tag">
+                <div class="legend-color-dot" style="background:var(--umg-gold);"></div>
+                <span>Región A</span>
+              </div>
+            </div>
+
+            <div class="plotter-actions">
+              <button class="btn-icon" onclick="zoomPlot(0.8)" title="Acercar (+)"><i
+                  data-lucide="zoom-in"></i></button>
+              <button class="btn-icon" onclick="zoomPlot(1.25)" title="Alejar (-)"><i
+                  data-lucide="zoom-out"></i></button>
+              <button class="btn-icon" onclick="resetPlotView()" title="Restablecer Vista Original"><i
+                  data-lucide="rotate-ccw"></i></button>
+            </div>
+          </div>
+
+          <div class="canvas-container" id="canvasContainer">
+            <canvas id="mathCanvas"></canvas>
+            <div class="canvas-tooltip" id="canvasTooltip"></div>
+          </div>
+
+          <div
+            style="display:flex; justify-content:space-between; align-items:center; margin-top:12px; font-size:0.85rem; color:var(--text-muted);">
+            <span><i data-lucide="mouse-pointer" style="width:14px; display:inline;"></i> Pasa el cursor sobre la
+              gráfica para ver coordenadas y alturas diferenciales $h(x)$.</span>
+            <span id="coordDisplay">x: 0.00 | y: 0.00</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       4. EJEMPLOS RESUELTOS PASO A PASO
+       ========================================================================== -->
+  <section class="section" id="ejemplos">
+    <div class="container">
+      <div class="section-header">
+        <span class="badge-sub"><i data-lucide="check-circle-2"></i> Casos de Estudio</span>
+        <h2 class="section-title">Ejemplos Resueltos Paso a Paso</h2>
+        <p class="section-desc">Tres problemas emblemáticos del cálculo integral completamente desarrollados con rigor
+          matemático y explicaciones didácticas.</p>
+      </div>
+
+      <div class="accordion-list">
+        <!-- Ejemplo 1 -->
+        <div class="accordion-item open">
+          <button class="accordion-header" onclick="toggleAccordion(this)">
+            <div class="accordion-title-box">
+              <div class="accordion-badge">1</div>
+              <div>
+                <h3 class="accordion-h3">Ejemplo 1: Parábola Cóncava hacia Abajo y Recta Secante</h3>
+                <span style="font-size:0.85rem; color:var(--text-muted)">Funciones: $f(x) = 4 - x^2$ y $g(x) = x +
+                  2$</span>
+              </div>
+            </div>
+            <i data-lucide="chevron-down" class="accordion-chevron"></i>
+          </button>
+
+          <div class="accordion-body">
+            <div class="solution-step">
+              <h5>Paso 1: Puntos de Intersección (Límites de Integración)</h5>
+              <p>Igualamos ambas funciones $f(x) = g(x)$ para encontrar las abscisas donde las curvas se cortan:</p>
+              <div class="formula-box">
+                $$4 - x^2 = x + 2 \implies x^2 + x - 2 = 0$$
+                $$(x + 2)(x - 1) = 0 \implies x_1 = -2, \quad x_2 = 1$$
+              </div>
+              <p>Por lo tanto, el intervalo de integración es $[-2, 1]$.</p>
+            </div>
+
+            <div class="solution-step">
+              <h5>Paso 2: Identificación de Curva Techo y Piso</h5>
+              <p>Evaluamos un punto interior, por ejemplo $x = 0$:</p>
+              <div class="formula-box">
+                $$f(0) = 4 - (0)^2 = 4$$
+                $$g(0) = 0 + 2 = 2$$
+              </div>
+              <p>Como $4 > 2$, se cumple que $f(x) \ge g(x)$ en todo el intervalo $[-2, 1]$. La parábola es el techo.
+              </p>
+            </div>
+
+            <div class="solution-step">
+              <h5>Paso 3: Planteamiento y Resolución de la Integral</h5>
+              <div class="formula-box">
+                $$A = \int_{-2}^{1} \Big[ (4 - x^2) - (x + 2) \Big] \, dx = \int_{-2}^{1} (2 - x - x^2) \, dx$$
+                $$A = \left[ 2x - \frac{x^2}{2} - \frac{x^3}{3} \right]_{-2}^{1}$$
+              </div>
+              <p>Evaluando en el límite superior $x = 1$ y restando la evaluación en el límite inferior $x = -2$:</p>
+              <div class="formula-box">
+                $$F(1) = 2(1) - \frac{1^2}{2} - \frac{1^3}{3} = 2 - \frac{1}{2} - \frac{1}{3} = \frac{7}{6}$$
+                $$F(-2) = 2(-2) - \frac{(-2)^2}{2} - \frac{(-2)^3}{3} = -4 - 2 + \frac{8}{3} = -\frac{10}{3}$$
+                $$A = \frac{7}{6} - \left( -\frac{10}{3} \right) = \frac{7}{6} + \frac{20}{6} = \frac{27}{6} =
+                \frac{9}{2} = 4.5 \text{ u}^2$$
+              </div>
+            </div>
+
+            <button class="btn-load-example" onclick="applyPreset('4 - x^2', 'x + 2', -2, 1); scrollToCalc();">
+              <i data-lucide="eye"></i> Cargar y Graficar este Ejemplo
+            </button>
+          </div>
+        </div>
+
+        <!-- Ejemplo 2 -->
+        <div class="accordion-item">
+          <button class="accordion-header" onclick="toggleAccordion(this)">
+            <div class="accordion-title-box">
+              <div class="accordion-badge">2</div>
+              <div>
+                <h3 class="accordion-h3">Ejemplo 2: Región Encerrada por Dos Parábolas Opuestas</h3>
+                <span style="font-size:0.85rem; color:var(--text-muted)">Funciones: $f(x) = 2 - x^2$ y $g(x) = x^2$
+                  (Aprovechamiento de Simetría)</span>
+              </div>
+            </div>
+            <i data-lucide="chevron-down" class="accordion-chevron"></i>
+          </button>
+
+          <div class="accordion-body">
+            <div class="solution-step">
+              <h5>Paso 1: Puntos de Intersección</h5>
+              <div class="formula-box">
+                $$2 - x^2 = x^2 \implies 2x^2 = 2 \implies x^2 = 1 \implies x = \pm 1$$
+              </div>
+              <p>Límites de integración: $a = -1$ y $b = 1$.</p>
+            </div>
+
+            <div class="solution-step">
+              <h5>Paso 2: Comportamiento y Simetría</h5>
+              <p>En el intervalo $[-1, 1]$, evaluando en $x = 0$:</p>
+              <div class="formula-box">
+                $$f(0) = 2 - 0 = 2, \quad g(0) = 0^2 = 0 \implies f(x) \ge g(x)$$
+              </div>
+              <p>Además, ambas funciones son pares ($f(-x) = f(x)$, $g(-x) = g(x)$), por lo que el área es simétrica
+                respecto al eje $Y$. Podemos integrar de $0$ a $1$ y multiplicar por $2$:</p>
+              <div class="formula-box">
+                $$A = 2 \int_{0}^{1} \Big[ (2 - x^2) - x^2 \Big] \, dx = 2 \int_{0}^{1} (2 - 2x^2) \, dx = 4
+                \int_{0}^{1} (1 - x^2) \, dx$$
+              </div>
+            </div>
+
+            <div class="solution-step">
+              <h5>Paso 3: Integración Directa</h5>
+              <div class="formula-box">
+                $$A = 4 \left[ x - \frac{x^3}{3} \right]_{0}^{1} = 4 \left( 1 - \frac{1}{3} - 0 \right) = 4 \left(
+                \frac{2}{3} \right) = \frac{8}{3} \approx 2.6667 \text{ u}^2$$
+              </div>
+            </div>
+
+            <button class="btn-load-example" onclick="applyPreset('2 - x^2', 'x^2', -1, 1); scrollToCalc();">
+              <i data-lucide="eye"></i> Cargar y Graficar este Ejemplo
+            </button>
+          </div>
+        </div>
+
+        <!-- Ejemplo 3 -->
+        <div class="accordion-item">
+          <button class="accordion-header" onclick="toggleAccordion(this)">
+            <div class="accordion-title-box">
+              <div class="accordion-badge">3</div>
+              <div>
+                <h3 class="accordion-h3">Ejemplo 3: Curvas con Múltiples Intersecciones y Cruce de Funciones</h3>
+                <span style="font-size:0.85rem; color:var(--text-muted)">Funciones: $f(x) = x^3 - 3x$ y $g(x) = x$
+                  (División en dos subintervalos)</span>
+              </div>
+            </div>
+            <i data-lucide="chevron-down" class="accordion-chevron"></i>
+          </button>
+
+          <div class="accordion-body">
+            <div class="solution-step">
+              <h5>Paso 1: Tres Puntos de Intersección</h5>
+              <div class="formula-box">
+                $$x^3 - 3x = x \implies x^3 - 4x = 0$$
+                $$x(x^2 - 4) = 0 \implies x(x - 2)(x + 2) = 0$$
+                $$x_1 = -2, \quad x_2 = 0, \quad x_3 = 2$$
+              </div>
+              <p>Las curvas generan <strong>dos regiones independientes</strong>: $R_1$ en $[-2, 0]$ y $R_2$ en $[0,
+                2]$.</p>
+            </div>
+
+            <div class="solution-step">
+              <h5>Paso 2: Análisis de Curva Superior en Cada Tramo</h5>
+              <p><strong>En $[-2, 0]$:</strong> Tomamos $x = -1$:</p>
+              <div class="formula-box">
+                $$f(-1) = (-1)^3 - 3(-1) = 2, \quad g(-1) = -1 \implies f(x) > g(x)$$
+              </div>
+              <p><strong>En $[0, 2]$:</strong> Tomamos $x = 1$:</p>
+              <div class="formula-box">
+                $$f(1) = 1^3 - 3(1) = -2, \quad g(1) = 1 \implies g(x) > f(x)$$
+              </div>
+              <p style="color:var(--umg-crimson); font-weight:600;">
+                ¡Atención! En el segundo tramo, la recta $g(x)$ está arriba de la cúbica $f(x)$. Si no dividiéramos la
+                integral, el área neta daría 0 por cancelación.
+              </p>
+            </div>
+
+            <div class="solution-step">
+              <h5>Paso 3: Cálculo de las Dos Sub-áreas</h5>
+              <div class="formula-box">
+                $$A_1 = \int_{-2}^{0} \Big[ (x^3 - 3x) - x \Big] \, dx = \int_{-2}^{0} (x^3 - 4x) \, dx = \left[
+                \frac{x^4}{4} - 2x^2 \right]_{-2}^{0} = 0 - (4 - 8) = 4 \text{ u}^2$$
+                $$A_2 = \int_{0}^{2} \Big[ x - (x^3 - 3x) \Big] \, dx = \int_{0}^{2} (4x - x^3) \, dx = \left[ 2x^2 -
+                \frac{x^4}{4} \right]_{0}^{2} = (8 - 4) - 0 = 4 \text{ u}^2$$
+                $$A_{\text{total}} = A_1 + A_2 = 4 + 4 = 8 \text{ u}^2$$
+              </div>
+            </div>
+
+            <button class="btn-load-example" onclick="applyPreset('x^3 - 3*x', 'x', -2, 2); scrollToCalc();">
+              <i data-lucide="eye"></i> Cargar y Graficar este Ejemplo
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       5. CUESTIONARIO DE EVALUACIÓN (QUIZ INTERACTIVO)
+       ========================================================================== -->
+  <section class="section section-alt" id="quiz">
+    <div class="container">
+      <div class="section-header">
+        <span class="badge-sub"><i data-lucide="award"></i> Autoevaluación</span>
+        <h2 class="section-title">Cuestionario Evaluativo Interactivo</h2>
+        <p class="section-desc">Ponte a prueba con este test de opción múltiple. Recibirás puntuación en tiempo real y
+          retroalimentación con la solución matemática explicada.</p>
+      </div>
+
+      <div class="quiz-card">
+        <div class="quiz-progress-bar">
+          <div class="quiz-progress-fill" id="quizProgressFill"></div>
+        </div>
+
+        <!-- Pregunta 1 -->
+        <div class="quiz-question-box active" data-q="0">
+          <div class="quiz-question-header">
+            <span class="quiz-badge">Pregunta 1 de 5</span>
+            <span style="font-size:0.85rem; color:var(--text-muted)">Concepto Teórico</span>
+          </div>
+          <h3 class="quiz-q-title">
+            Si $f(x) \ge g(x)$ para todo $x \in [a, b]$, ¿cuál es la expresión correcta para el área acotada entre ambas
+            curvas?
+          </h3>
+          <div class="quiz-options">
+            <div class="quiz-opt" onclick="selectOption(0, 0)">
+              <span>A)</span> $A = \int_a^b [g(x) - f(x)] \, dx$
+            </div>
+            <div class="quiz-opt" onclick="selectOption(0, 1)">
+              <span>B)</span> $A = \int_a^b [f(x) - g(x)] \, dx$
+            </div>
+            <div class="quiz-opt" onclick="selectOption(0, 2)">
+              <span>C)</span> $A = \int_a^b [f(x) \cdot g(x)] \, dx$
+            </div>
+            <div class="quiz-opt" onclick="selectOption(0, 3)">
+              <span>D)</span> $A = \pi \int_a^b [f(x)^2 - g(x)^2] \, dx$
+            </div>
+          </div>
+          <div class="quiz-feedback" id="feedback-0"></div>
+        </div>
+
+        <!-- Pregunta 2 -->
+        <div class="quiz-question-box" data-q="1">
+          <div class="quiz-question-header">
+            <span class="quiz-badge">Pregunta 2 de 5</span>
+            <span style="font-size:0.85rem; color:var(--text-muted)">Cálculo Rápido</span>
+          </div>
+          <h3 class="quiz-q-title">
+            ¿Cuál es el área de la región acotada por $f(x) = x$ y $g(x) = x^2$ en el intervalo $[0, 1]$?
+          </h3>
+          <div class="quiz-options">
+            <div class="quiz-opt" onclick="selectOption(1, 0)">
+              <span>A)</span> $1/2 \text{ u}^2$
+            </div>
+            <div class="quiz-opt" onclick="selectOption(1, 1)">
+              <span>B)</span> $1/3 \text{ u}^2$
+            </div>
+            <div class="quiz-opt" onclick="selectOption(1, 2)">
+              <span>C)</span> $1/6 \text{ u}^2$
+            </div>
+            <div class="quiz-opt" onclick="selectOption(1, 3)">
+              <span>D)</span> $1/12 \text{ u}^2$
+            </div>
+          </div>
+          <div class="quiz-feedback" id="feedback-1"></div>
+        </div>
+
+        <!-- Pregunta 3 -->
+        <div class="quiz-question-box" data-q="2">
+          <div class="quiz-question-header">
+            <span class="quiz-badge">Pregunta 3 de 5</span>
+            <span style="font-size:0.85rem; color:var(--text-muted)">Análisis de Signos</span>
+          </div>
+          <h3 class="quiz-q-title">
+            ¿Qué ocurre si se integra directamente $\int_a^b [f(x) - g(x)] \, dx$ cuando las curvas se cortan en un
+            punto interior $c \in (a, b)$ sin dividir el intervalo?
+          </h3>
+          <div class="quiz-options">
+            <div class="quiz-opt" onclick="selectOption(2, 0)">
+              <span>A)</span> El resultado siempre da un número complejo imaginario.
+            </div>
+            <div class="quiz-opt" onclick="selectOption(2, 1)">
+              <span>B)</span> Las áreas parciales se restan (área neta o con signo), subestimando o anulando el área
+              geométrica total.
+            </div>
+            <div class="quiz-opt" onclick="selectOption(2, 2)">
+              <span>C)</span> Se obtiene el doble del área exacta por teorema de simetría.
+            </div>
+            <div class="quiz-opt" onclick="selectOption(2, 3)">
+              <span>D)</span> La integral siempre diverge a infinito.
+            </div>
+          </div>
+          <div class="quiz-feedback" id="feedback-2"></div>
+        </div>
+
+        <!-- Pregunta 4 -->
+        <div class="quiz-question-box" data-q="3">
+          <div class="quiz-question-header">
+            <span class="quiz-badge">Pregunta 4 de 5</span>
+            <span style="font-size:0.85rem; color:var(--text-muted)">Estrategia de Integración</span>
+          </div>
+          <h3 class="quiz-q-title">
+            ¿Cuándo es más conveniente integrar respecto a $y$ (método de franjas horizontales $dy$)?
+          </h3>
+          <div class="quiz-options">
+            <div class="quiz-opt" onclick="selectOption(3, 0)">
+              <span>A)</span> Cuando las funciones vienen dadas de forma natural como $x = f(y)$ y la curva derecha e
+              izquierda no cambian en el intervalo.
+            </div>
+            <div class="quiz-opt" onclick="selectOption(3, 1)">
+              <span>B)</span> Únicamente cuando la región no toca el eje $Y$.
+            </div>
+            <div class="quiz-opt" onclick="selectOption(3, 2)">
+              <span>C)</span> Sólo cuando se calcula el volumen de un sólido en revolución.
+            </div>
+            <div class="quiz-opt" onclick="selectOption(3, 3)">
+              <span>D)</span> Nunca, ya que ambos métodos siempre tienen exactamente la misma dificultad algebraica.
+            </div>
+          </div>
+          <div class="quiz-feedback" id="feedback-3"></div>
+        </div>
+
+        <!-- Pregunta 5 -->
+        <div class="quiz-question-box" data-q="4">
+          <div class="quiz-question-header">
+            <span class="quiz-badge">Pregunta 5 de 5</span>
+            <span style="font-size:0.85rem; color:var(--text-muted)">Álgebra de Intersección</span>
+          </div>
+          <h3 class="quiz-q-title">
+            ¿Cuáles son los puntos de intersección entre $f(x) = 2 - x^2$ y $g(x) = x$?
+          </h3>
+          <div class="quiz-options">
+            <div class="quiz-opt" onclick="selectOption(4, 0)">
+              <span>A)</span> $x = -2$ y $x = 1$
+            </div>
+            <div class="quiz-opt" onclick="selectOption(4, 1)">
+              <span>B)</span> $x = 0$ y $x = 2$
+            </div>
+            <div class="quiz-opt" onclick="selectOption(4, 2)">
+              <span>C)</span> $x = -1$ y $x = 2$
+            </div>
+            <div class="quiz-opt" onclick="selectOption(4, 3)">
+              <span>D)</span> $x = -\sqrt{2}$ y $x = \sqrt{2}$
+            </div>
+          </div>
+          <div class="quiz-feedback" id="feedback-4"></div>
+        </div>
+
+        <!-- Pantalla Final de Puntuación -->
+        <div class="quiz-final-screen" id="quizFinalScreen">
+          <div class="quiz-score-circle">
+            <span class="quiz-score-num" id="finalScoreDisplay">5/5</span>
+            <span style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.05em;">Aciertos</span>
+          </div>
+          <h3 style="font-size:1.75rem; color:var(--text-heading); margin-bottom:0.5rem;" id="finalScoreTitle">
+            ¡Excelente Dominio!
+          </h3>
+          <p style="color:var(--text-muted); max-width:480px; margin:0 auto 1.75rem;" id="finalScoreMsg">
+            Has demostrado un conocimiento completo de los teoremas y métodos de integración para el cálculo de áreas
+            entre curvas.
+          </p>
+          <button class="btn-primary" style="margin:0 auto;" onclick="restartQuiz()">
+            <i data-lucide="rotate-ccw"></i> Reiniciar Cuestionario
+          </button>
+        </div>
+
+        <!-- Botones de Navegación del Quiz -->
+        <div class="quiz-nav-btns" id="quizNavRow">
+          <button class="btn-secondary" id="quizPrevBtn" onclick="prevQuestion()" disabled>
+            <i data-lucide="arrow-left" style="width:16px; display:inline;"></i> Anterior
+          </button>
+          <span style="font-size:0.85rem; font-weight:600; color:var(--text-muted)" id="quizCounterText">
+            Pregunta 1 de 5
+          </span>
+          <button class="btn-primary" id="quizNextBtn" onclick="nextQuestion()">
+            Siguiente <i data-lucide="arrow-right" style="width:16px; display:inline;"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       6. FORMULARIO & CHEATSHEET ACADÉMICO
+       ========================================================================== -->
+  <section class="section" id="formulario">
+    <div class="container">
+      <div class="section-header">
+        <span class="badge-sub"><i data-lucide="file-text"></i> Referencia Rápida</span>
+        <h2 class="section-title">Formulario y Propiedades Clave</h2>
+        <p class="section-desc">Compendio de reglas de integración inmediata, propiedades de la integral definida y guía
+          de decisión para resolver exámenes y tareas.</p>
+      </div>
+
+      <div class="cheatsheet-grid">
+        <!-- Integrales Inmediatas -->
+        <div class="cheat-card">
+          <h4><i data-lucide="hash"></i> Integrales Fundamentales</h4>
+          <div class="formula-row">
+            <span>Regla de la Potencia:</span>
+            <span>$\int x^n dx = \frac{x^{n+1}}{n+1} + C$</span>
+          </div>
+          <div class="formula-row">
+            <span>Integral de una Constante:</span>
+            <span>$\int k \, dx = kx + C$</span>
+          </div>
+          <div class="formula-row">
+            <span>Función Exponencial:</span>
+            <span>$\int e^{kx} dx = \frac{1}{k}e^{kx} + C$</span>
+          </div>
+          <div class="formula-row">
+            <span>Función Racional Simple:</span>
+            <span>$\int \frac{1}{x} dx = \ln|x| + C$</span>
+          </div>
+        </div>
+
+        <!-- Integrales Trigonométricas -->
+        <div class="cheat-card">
+          <h4><i data-lucide="activity"></i> Trigonométricas Básicas</h4>
+          <div class="formula-row">
+            <span>Seno:</span>
+            <span>$\int \sin(x) dx = -\cos(x) + C$</span>
+          </div>
+          <div class="formula-row">
+            <span>Coseno:</span>
+            <span>$\int \cos(x) dx = \sin(x) + C$</span>
+          </div>
+          <div class="formula-row">
+            <span>Secante al Cuadrado:</span>
+            <span>$\int \sec^2(x) dx = \tan(x) + C$</span>
+          </div>
+          <div class="formula-row">
+            <span>Secante por Tangente:</span>
+            <span>$\int \sec(x)\tan(x) dx = \sec(x) + C$</span>
+          </div>
+        </div>
+
+        <!-- Propiedades de la Integral Definida -->
+        <div class="cheat-card">
+          <h4><i data-lucide="layers"></i> Propiedades de la Integral</h4>
+          <div class="formula-row">
+            <span>Linealidad:</span>
+            <span>$\int [af \pm bg] = a\int f \pm b\int g$</span>
+          </div>
+          <div class="formula-row">
+            <span>Inversión de Límites:</span>
+            <span>$\int_a^b f = -\int_b^a f$</span>
+          </div>
+          <div class="formula-row">
+            <span>Aditividad de Intervalo:</span>
+            <span>$\int_a^b f = \int_a^c f + \int_c^b f$</span>
+          </div>
+          <div class="formula-row">
+            <span>Límites Idénticos:</span>
+            <span>$\int_a^a f(x) dx = 0$</span>
+          </div>
+        </div>
+
+        <!-- Criterio de Decisión dx vs dy -->
+        <div class="cheat-card">
+          <h4><i data-lucide="compass"></i> ¿Integrar en $dx$ o $dy$?</h4>
+          <div style="font-size:0.875rem; color:var(--text-main); line-height:1.6;">
+            <p><strong>Usa $dx$ si:</strong> Las curvas tienen la forma explícita $y = f(x)$ y una misma curva permanece
+              arriba en todo el intervalo.</p>
+            <p style="margin-top:8px;"><strong>Usa $dy$ si:</strong> Despejar $y$ generaría raíces con doble signo $(\pm
+              \sqrt{x})$, o si integrar en $x$ obligaría a partir la región en múltiples integrales.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       7. MATERIAL AUDIOVISUAL (EXPOSICIÓN MAGISTRAL EN VIDEO)
+       ========================================================================== -->
+  <section class="section section-alt" id="audiovisual">
+    <div class="container">
+      <div class="section-header">
+        <span class="badge-sub"><i data-lucide="video"></i> Multimedia Académico</span>
+        <h2 class="section-title">Material Audiovisual</h2>
+        <p class="section-desc">Exposición audiovisual del tema "Área entre las Funciones", desarrollada como recurso magistral complementario del curso de Cálculo Integral.</p>
+      </div>
+
+      <div class="audiovisual-card">
+        <!-- Barra Superior de Estado -->
+        <div class="audiovisual-topbar">
+          <div class="audiovisual-title-badge">
+            <i data-lucide="play-circle"></i>
+            <span>Exposición Audiovisual Oficial HD</span>
+          </div>
+          <div class="audiovisual-status" id="videoStatusBadge">
+            <span class="status-dot status-ready" id="videoStatusDot"></span>
+            <span id="videoStatusText">Video Oficial Listo: video.mp4</span>
+          </div>
+        </div>
+
+        <!-- Contenedor del Reproductor de Video -->
+        <div class="video-wrapper" id="videoWrapper">
+          <video id="academicVideoPlayer" src="video.mp4" controls playsinline preload="auto">
+            <source id="academicVideoSource" src="video.mp4" type="video/mp4">
+            Tu navegador no soporta la reproducción de video HTML5.
+          </video>
+
+          <!-- Overlay de respaldo (solo en caso de error) -->
+          <div class="video-overlay hidden" id="videoOverlay">
+            <div class="video-overlay-content">
+              <div class="video-empty-icon">
+                <i data-lucide="alert-circle"></i>
+              </div>
+              <h3>Video Explicativo</h3>
+              <p>
+                No se pudo reproducir el archivo <code>video.mp4</code>. Haz clic para recargar.
+              </p>
+              <div class="video-overlay-actions">
+                <button class="btn btn-primary" onclick="retryLocalVideo()" style="display:inline-flex; align-items:center; gap:8px;">
+                  <i data-lucide="refresh-cw"></i> Recargar Video
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Barra Inferior de Controles -->
+        <div class="video-controls-bar">
+          <div class="video-controls-left">
+            <button class="btn btn-secondary" onclick="retryLocalVideo()" title="Recargar video explicativo" style="font-size:0.875rem; display:inline-flex; align-items:center; gap:6px;">
+              <i data-lucide="rotate-ccw" style="width:16px;"></i> Recargar Video
+            </button>
+            <span style="font-size:0.825rem; color:var(--text-muted); font-weight:600; display:inline-flex; align-items:center; gap:6px;">
+              <i data-lucide="shield-check" style="width:16px; color:var(--umg-gold);"></i> Recurso Docente Oficial
+            </span>
+          </div>
+
+          <div class="video-controls-right">
+            <div class="speed-selector-group">
+              <span style="font-size:0.8rem; font-weight:600; color:var(--text-muted); margin-right:4px;">Velocidad:</span>
+              <button class="speed-btn active" onclick="setSpeed(1, this)">1x</button>
+              <button class="speed-btn" onclick="setSpeed(1.25, this)">1.25x</button>
+              <button class="speed-btn" onclick="setSpeed(1.5, this)">1.5x</button>
+              <button class="speed-btn" onclick="setSpeed(2, this)">2x</button>
+            </div>
+            <button class="btn-icon" onclick="toggleFullscreen()" title="Pantalla Completa" aria-label="Pantalla Completa">
+              <i data-lucide="maximize" style="width:18px;"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Cuadrícula de Información Académica del Video (3 columnas) -->
+        <div class="audiovisual-info-grid">
+          <!-- Columna 1: Ficha Técnica -->
+          <div class="video-info-card">
+            <div class="info-card-header">
+              <i data-lucide="bookmark" style="color:var(--umg-crimson)"></i>
+              <h4>Ficha del Material</h4>
+            </div>
+            <ul class="video-info-list">
+              <li><strong>Tema:</strong> Cálculo de Áreas entre Curvas ($dx$ y $dy$)</li>
+              <li><strong>Expositora:</strong> Zoila Ericka Amanda Díaz Medrano</li>
+              <li><strong>Institución:</strong> Universidad Mariano Gálvez de Guatemala</li>
+              <li><strong>Catedrático:</strong> Lic. Juan Francisco Culajay Gaitán</li>
+            </ul>
+          </div>
+
+          <!-- Columna 2: Contenido Explicado -->
+          <div class="video-info-card">
+            <div class="info-card-header">
+              <i data-lucide="check-circle-2" style="color:var(--umg-gold)"></i>
+              <h4>Contenido del Video</h4>
+            </div>
+            <ul class="video-info-list">
+              <li>Identificación de función superior $f(x)$ e inferior $g(x)$.</li>
+              <li>Determinación de puntos de intersección igualando $f(x) = g(x)$.</li>
+              <li>Planteamiento y cálculo de la integral $\int_a^b [f(x) - g(x)] dx$.</li>
+              <li>Demostración geométrica y verificación del resultado.</li>
+            </ul>
+          </div>
+
+          <!-- Columna 3: Información Institucional -->
+          <div class="video-info-card guide-card">
+            <div class="info-card-header">
+              <i data-lucide="video" style="color:var(--umg-navy)"></i>
+              <h4>Recurso Académico Oficial</h4>
+            </div>
+            <div style="font-size:0.875rem; color:var(--text-main); line-height:1.6;">
+              <p><strong>Exposición Magistral:</strong> Este video es parte integral de la presentación del proyecto de Cálculo Integral.</p>
+              <p style="margin-top:6px;"><strong>Reproducción Directa:</strong> El contenido se reproduce de forma fluida y automática a través del reproductor integrado para todos los usuarios.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       PIE DE PÁGINA INSTITUCIONAL
+       ========================================================================== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h5 style="color:var(--umg-gold); font-family:var(--font-display); letter-spacing:0.08em;">
+            UNIVERSIDAD MARIANO GÁLVEZ DE GUATEMALA
+          </h5>
+          <p style="font-size:0.9rem; line-height:1.6;">
+            Facultad de Ingeniería • Escuela de Ciencias de la Computación<br>
+            Curso: Cálculo Integral • Catedrático: <strong>Lic. Juan Francisco Culajay Gaitán</strong>
+          </p>
+          <div class="footer-quote">
+            "Conoceréis la verdad y la verdad os hará libres" — San Juan 8:32
+          </div>
+        </div>
+
+        <div>
+          <h5>Navegación Rápida</h5>
+          <ul style="list-style:none; font-size:0.875rem; display:flex; flex-direction:column; gap:8px;">
+            <li><a href="#inicio" style="color:#CBD5E1;">Inicio y Carátula</a></li>
+            <li><a href="#teoria" style="color:#CBD5E1;">Marco Teórico</a></li>
+            <li><a href="#calculadora" style="color:#CBD5E1;">Graficador Interactivo</a></li>
+            <li><a href="#ejemplos" style="color:#CBD5E1;">Ejemplos Resueltos</a></li>
+            <li><a href="#quiz" style="color:#CBD5E1;">Evaluación</a></li>
+            <li><a href="#formulario" style="color:#CBD5E1;">Formulario</a></li>
+            <li><a href="#audiovisual" style="color:#CBD5E1;">Material Audiovisual</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h5>Estudiante</h5>
+          <p style="font-size:0.95rem; font-weight:600; color:#FFFFFF;">
+            Zoila Ericka Amanda Díaz Medrano
+          </p>
+          <p style="font-size:0.85rem; color:#CBD5E1; margin-top:4px;">
+            Guatemala, Ciclo 2026
+          </p>
+          <div
+            style="margin-top:12px; display:inline-flex; align-items:center; gap:6px; background:rgba(212,175,55,0.15); color:var(--umg-gold); padding:4px 10px; border-radius:999px; font-size:0.75rem; font-weight:700;">
+            <i data-lucide="shield-check" style="width:14px;"></i> Trabajo Académico
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 Universidad Mariano Gálvez de Guatemala. Desarrollado con KaTeX, Math.js y HTML5 Canvas.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==========================================================================
+       SCRIPTS: MOTOR MATEMÁTICO, CANVAS PLOTTER, QUIZ Y NAVEGACIÓN
+       ========================================================================== -->
+  <script>
+    // Inicializar Iconos Lucide
+    lucide.createIcons();
+
+    // Renderizado automático de fórmulas LaTeX con KaTeX
+    document.addEventListener("DOMContentLoaded", function () {
+      if (typeof renderMathInElement !== 'undefined') {
+        renderMathInElement(document.body, {
+          delimiters: [
+            { left: '$$', right: '$$', display: true },
+            { left: '$', right: '$', display: false }
+          ],
+          throwOnError: false
+        });
+      }
+    });
+
+    // ==========================================================================
+    // TEMA OSCURO / CLARO
+    // ==========================================================================
+    const themeToggleBtn = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+
+    function setTheme(theme) {
+      if (theme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('umg-theme', 'dark');
+        themeIcon.setAttribute('data-lucide', 'sun');
+      } else {
+        document.documentElement.removeAttribute('data-theme');
+        localStorage.setItem('umg-theme', 'light');
+        themeIcon.setAttribute('data-lucide', 'moon');
+      }
+      lucide.createIcons();
+      if (typeof drawPlot === 'function') drawPlot();
+    }
+
+    themeToggleBtn.addEventListener('click', () => {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      setTheme(isDark ? 'light' : 'dark');
+    });
+
+    // Detectar preferencia guardada
+    const savedTheme = localStorage.getItem('umg-theme');
+    if (savedTheme) {
+      setTheme(savedTheme);
+    }
+
+    // Menú Móvil
+    const mobileMenuBtn = document.getElementById('mobileMenuToggle');
+    const navLinks = document.getElementById('navLinks');
+    mobileMenuBtn.addEventListener('click', () => {
+      navLinks.classList.toggle('show');
+    });
+
+    // ==========================================================================
+    // PESTAÑAS dx vs dy
+    // ==========================================================================
+    function switchTab(method) {
+      const tabs = document.querySelectorAll('.compare-tab');
+      const contents = document.querySelectorAll('.compare-content');
+      tabs.forEach(t => t.classList.remove('active'));
+      contents.forEach(c => c.classList.remove('active'));
+
+      if (method === 'dx') {
+        tabs[0].classList.add('active');
+        document.getElementById('tab-dx').classList.add('active');
+      } else {
+        tabs[1].classList.add('active');
+        document.getElementById('tab-dy').classList.add('active');
+      }
+    }
+
+    // ==========================================================================
+    // ACORDEONES DE EJEMPLOS
+    // ==========================================================================
+    function toggleAccordion(headerBtn) {
+      const item = headerBtn.closest('.accordion-item');
+      item.classList.toggle('open');
+    }
+
+    function scrollToCalc() {
+      const calcElem = document.getElementById('calculadora');
+      if (calcElem) {
+        calcElem.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    // ==========================================================================
+    // MOTOR GRÁFICO (HTML5 CANVAS DE ALTA RESOLUCIÓN)
+    // ==========================================================================
+    const canvas = document.getElementById('mathCanvas');
+    const ctx = canvas.getContext('2d');
+    const container = document.getElementById('canvasContainer');
+    const tooltip = document.getElementById('canvasTooltip');
+    const coordDisplay = document.getElementById('coordDisplay');
+
+    // Estado del plano cartesiano
+    let view = {
+      xMin: -5,
+      xMax: 5,
+      yMin: -4,
+      yMax: 6,
+      isDragging: false,
+      dragStartX: 0,
+      dragStartY: 0,
+      savedXMin: -5,
+      savedXMax: 5,
+      savedYMin: -4,
+      savedYMax: 6
+    };
+
+    // Funciones y límites actuales
+    let currentFExpr = '4 - x^2';
+    let currentGExpr = 'x + 2';
+    let currentA = -2;
+    let currentB = 1;
+    let compiledF = null;
+    let compiledG = null;
+    let mousePos = { x: 0, y: 0, worldX: 0, worldY: 0, inside: false };
+
+    function resizeCanvas() {
+      const dpr = window.devicePixelRatio || 1;
+      const rect = container.getBoundingClientRect();
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+      drawPlot();
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+
+    // Transformaciones de coordenadas mundo <-> pantalla
+    function toScreenX(x) {
+      const rect = container.getBoundingClientRect();
+      return ((x - view.xMin) / (view.xMax - view.xMin)) * rect.width;
+    }
+
+    function toScreenY(y) {
+      const rect = container.getBoundingClientRect();
+      return rect.height - ((y - view.yMin) / (view.yMax - view.yMin)) * rect.height;
+    }
+
+    function toWorldX(sx) {
+      const rect = container.getBoundingClientRect();
+      return view.xMin + (sx / rect.width) * (view.xMax - view.xMin);
+    }
+
+    function toWorldY(sy) {
+      const rect = container.getBoundingClientRect();
+      return view.yMin + ((rect.height - sy) / rect.height) * (view.yMax - view.yMin);
+    }
+
+    // Dibujado del Plano y Curvas
+    function drawPlot() {
+      const rect = container.getBoundingClientRect();
+      const width = rect.width;
+      const height = rect.height;
+      if (width === 0 || height === 0) return;
+
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const gridColor = isDark ? '#1C2B3E' : '#E2E8F0';
+      const axisColor = isDark ? '#64748B' : '#475569';
+      const textColor = isDark ? '#94A3B8' : '#64748B';
+      const fColor = isDark ? '#38BDF8' : '#002B49';
+      const gColor = isDark ? '#F43F5E' : '#A6192E';
+      const shadedFill = isDark ? 'rgba(212, 175, 55, 0.35)' : 'rgba(212, 175, 55, 0.28)';
+
+      ctx.clearRect(0, 0, width, height);
+
+      // 1. Cuadrícula
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = gridColor;
+
+      // Calcular paso de cuadrícula dinámico
+      const xRange = view.xMax - view.xMin;
+      const yRange = view.yMax - view.yMin;
+      let stepX = Math.pow(10, Math.floor(Math.log10(xRange / 6)));
+      if (xRange / stepX > 14) stepX *= 2;
+      if (xRange / stepX < 4) stepX /= 2;
+
+      let stepY = Math.pow(10, Math.floor(Math.log10(yRange / 6)));
+      if (yRange / stepY > 14) stepY *= 2;
+      if (yRange / stepY < 4) stepY /= 2;
+
+      const startX = Math.floor(view.xMin / stepX) * stepX;
+      for (let x = startX; x <= view.xMax; x += stepX) {
+        const sx = toScreenX(x);
+        ctx.beginPath();
+        ctx.moveTo(sx, 0);
+        ctx.lineTo(sx, height);
+        ctx.stroke();
+
+        // Números en el eje X
+        if (Math.abs(x) > 0.0001) {
+          ctx.font = '10px "JetBrains Mono", monospace';
+          ctx.fillStyle = textColor;
+          ctx.textAlign = 'center';
+          const sy = Math.min(Math.max(toScreenY(0) + 14, 14), height - 6);
+          ctx.fillText(Number(x.toFixed(2)).toString(), sx, sy);
+        }
+      }
+
+      const startY = Math.floor(view.yMin / stepY) * stepY;
+      for (let y = startY; y <= view.yMax; y += stepY) {
+        const sy = toScreenY(y);
+        ctx.beginPath();
+        ctx.moveTo(0, sy);
+        ctx.lineTo(width, sy);
+        ctx.stroke();
+
+        // Números en el eje Y
+        if (Math.abs(y) > 0.0001) {
+          ctx.font = '10px "JetBrains Mono", monospace';
+          ctx.fillStyle = textColor;
+          ctx.textAlign = 'right';
+          const sx = Math.min(Math.max(toScreenX(0) - 6, 26), width - 6);
+          ctx.fillText(Number(y.toFixed(2)).toString(), sx, sy + 3);
+        }
+      }
+
+      // 2. Ejes Principales X e Y
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = axisColor;
+
+      // Eje X
+      const screenY0 = toScreenY(0);
+      if (screenY0 >= 0 && screenY0 <= height) {
+        ctx.beginPath();
+        ctx.moveTo(0, screenY0);
+        ctx.lineTo(width, screenY0);
+        ctx.stroke();
+      }
+
+      // Eje Y
+      const screenX0 = toScreenX(0);
+      if (screenX0 >= 0 && screenX0 <= width) {
+        ctx.beginPath();
+        ctx.moveTo(screenX0, 0);
+        ctx.lineTo(screenX0, height);
+        ctx.stroke();
+      }
+
+      // Compilar expresiones si es necesario
+      try {
+        if (!compiledF) compiledF = math.compile(currentFExpr);
+        if (!compiledG) compiledG = math.compile(currentGExpr);
+      } catch (err) {
+        return; // Expresión incompleta
+      }
+
+      // 3. Región Sombreada entre [currentA, currentB]
+      const minA = Math.min(currentA, currentB);
+      const maxB = Math.max(currentA, currentB);
+
+      if (minA < maxB && minA <= view.xMax && maxB >= view.xMin) {
+        const shadeStart = Math.max(minA, view.xMin);
+        const shadeEnd = Math.min(maxB, view.xMax);
+        const numSteps = 300;
+        const dx = (shadeEnd - shadeStart) / numSteps;
+
+        ctx.fillStyle = shadedFill;
+        ctx.beginPath();
+
+        // Recorrido de f(x) de izquierda a derecha
+        let first = true;
+        for (let i = 0; i <= numSteps; i++) {
+          const x = shadeStart + i * dx;
+          let yF = 0;
+          try {
+            yF = compiledF.evaluate({ x: x });
+          } catch (e) { continue; }
+          const sx = toScreenX(x);
+          const sy = toScreenY(yF);
+          if (first) { ctx.moveTo(sx, sy); first = false; }
+          else { ctx.lineTo(sx, sy); }
+        }
+
+        // Recorrido de g(x) de derecha a izquierda para cerrar el polígono
+        for (let i = numSteps; i >= 0; i--) {
+          const x = shadeStart + i * dx;
+          let yG = 0;
+          try {
+            yG = compiledG.evaluate({ x: x });
+          } catch (e) { continue; }
+          const sx = toScreenX(x);
+          const sy = toScreenY(yG);
+          ctx.lineTo(sx, sy);
+        }
+
+        ctx.closePath();
+        ctx.fill();
+
+        // Dibujar líneas verticales límites a y b
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([4, 4]);
+        ctx.strokeStyle = '#D4AF37';
+
+        [minA, maxB].forEach(lim => {
+          if (lim >= view.xMin && lim <= view.xMax) {
+            const sx = toScreenX(lim);
+            ctx.beginPath();
+            ctx.moveTo(sx, 0);
+            ctx.lineTo(sx, height);
+            ctx.stroke();
+
+            // Etiqueta del límite
+            ctx.fillStyle = '#D4AF37';
+            ctx.font = 'bold 11px "JetBrains Mono", monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText(lim === minA ? `x = a (${lim})` : `x = b (${lim})`, sx, height - 12);
+          }
+        });
+        ctx.setLineDash([]);
+      }
+
+      // 4. Dibujar Curva f(x)
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = fColor;
+      ctx.beginPath();
+      let activeF = false;
+      const pixelSteps = width;
+      for (let px = 0; px <= pixelSteps; px += 2) {
+        const x = toWorldX(px);
+        let y = 0;
+        try {
+          y = compiledF.evaluate({ x: x });
+        } catch (e) {
+          activeF = false;
+          continue;
+        }
+
+        if (isNaN(y) || !isFinite(y)) {
+          activeF = false;
+          continue;
+        }
+
+        const py = toScreenY(y);
+        if (!activeF) {
+          ctx.moveTo(px, py);
+          activeF = true;
+        } else {
+          ctx.lineTo(px, py);
+        }
+      }
+      ctx.stroke();
+
+      // 5. Dibujar Curva g(x)
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = gColor;
+      ctx.beginPath();
+      let activeG = false;
+      for (let px = 0; px <= pixelSteps; px += 2) {
+        const x = toWorldX(px);
+        let y = 0;
+        try {
+          y = compiledG.evaluate({ x: x });
+        } catch (e) {
+          activeG = false;
+          continue;
+        }
+
+        if (isNaN(y) || !isFinite(y)) {
+          activeG = false;
+          continue;
+        }
+
+        const py = toScreenY(y);
+        if (!activeG) {
+          ctx.moveTo(px, py);
+          activeG = true;
+        } else {
+          ctx.lineTo(px, py);
+        }
+      }
+      ctx.stroke();
+
+      // 6. Si el mouse está dentro de la región entre [a, b], dibujar rectángulo representativo dA
+      if (mousePos.inside && mousePos.worldX >= minA && mousePos.worldX <= maxB) {
+        try {
+          const yF = compiledF.evaluate({ x: mousePos.worldX });
+          const yG = compiledG.evaluate({ x: mousePos.worldX });
+          const sx = toScreenX(mousePos.worldX);
+          const syF = toScreenY(yF);
+          const syG = toScreenY(yG);
+
+          ctx.lineWidth = 2;
+          ctx.strokeStyle = '#D4AF37';
+          ctx.fillStyle = 'rgba(212, 175, 55, 0.4)';
+          const rectW = 8;
+          ctx.fillRect(sx - rectW / 2, Math.min(syF, syG), rectW, Math.abs(syF - syG));
+          ctx.strokeRect(sx - rectW / 2, Math.min(syF, syG), rectW, Math.abs(syF - syG));
+
+          // Puntos en f y g
+          ctx.fillStyle = fColor;
+          ctx.beginPath();
+          ctx.arc(sx, syF, 5, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = gColor;
+          ctx.beginPath();
+          ctx.arc(sx, syG, 5, 0, Math.PI * 2);
+          ctx.fill();
+        } catch (e) { }
+      }
+    }
+
+    // ==========================================================================
+    // INTERACCIÓN CON EL CANVAS (PAN & ZOOM & TOOLTIP)
+    // ==========================================================================
+    container.addEventListener('mousedown', (e) => {
+      view.isDragging = true;
+      view.dragStartX = e.clientX;
+      view.dragStartY = e.clientY;
+      view.savedXMin = view.xMin;
+      view.savedXMax = view.xMax;
+      view.savedYMin = view.yMin;
+      view.savedYMax = view.yMax;
+      container.style.cursor = 'grabbing';
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      const rect = container.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      if (view.isDragging) {
+        const dx = e.clientX - view.dragStartX;
+        const dy = e.clientY - view.dragStartY;
+        const worldDx = (dx / rect.width) * (view.savedXMax - view.savedXMin);
+        const worldDy = (dy / rect.height) * (view.savedYMax - view.savedYMin);
+
+        view.xMin = view.savedXMin - worldDx;
+        view.xMax = view.savedXMax - worldDx;
+        view.yMin = view.savedYMin + worldDy;
+        view.yMax = view.savedYMax + worldDy;
+
+        drawPlot();
+      }
+
+      if (mouseX >= 0 && mouseX <= rect.width && mouseY >= 0 && mouseY <= rect.height) {
+        mousePos.inside = true;
+        mousePos.x = mouseX;
+        mousePos.y = mouseY;
+        mousePos.worldX = toWorldX(mouseX);
+        mousePos.worldY = toWorldY(mouseY);
+
+        coordDisplay.textContent = `x: ${mousePos.worldX.toFixed(2)} | y: ${mousePos.worldY.toFixed(2)}`;
+
+        // Tooltip con valores de funciones
+        try {
+          const yF = compiledF.evaluate({ x: mousePos.worldX });
+          const yG = compiledG.evaluate({ x: mousePos.worldX });
+          const dist = Math.abs(yF - yG);
+
+          tooltip.style.display = 'block';
+          tooltip.style.left = `${Math.min(mouseX + 15, rect.width - 160)}px`;
+          tooltip.style.top = `${Math.min(mouseY + 15, rect.height - 90)}px`;
+          tooltip.innerHTML = `
+            <strong>x = ${mousePos.worldX.toFixed(2)}</strong><br>
+            <span style="color:#38BDF8">f(x) = ${yF.toFixed(3)}</span><br>
+            <span style="color:#F43F5E">g(x) = ${yG.toFixed(3)}</span><br>
+            <span style="color:#D4AF37">h = |f-g|: ${dist.toFixed(3)}</span>
+          `;
+        } catch (e) {
+          tooltip.style.display = 'none';
+        }
+        drawPlot();
+      } else {
+        mousePos.inside = false;
+        tooltip.style.display = 'none';
+      }
+    });
+
+    window.addEventListener('mouseup', () => {
+      view.isDragging = false;
+      container.style.cursor = 'crosshair';
+    });
+
+    container.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const zoomFactor = e.deltaY > 0 ? 1.15 : 0.85;
+      zoomPlot(zoomFactor);
+    });
+
+    function zoomPlot(factor) {
+      const centerX = (view.xMin + view.xMax) / 2;
+      const centerY = (view.yMin + view.yMax) / 2;
+      const newHalfW = ((view.xMax - view.xMin) * factor) / 2;
+      const newHalfH = ((view.yMax - view.yMin) * factor) / 2;
+
+      view.xMin = centerX - newHalfW;
+      view.xMax = centerX + newHalfW;
+      view.yMin = centerY - newHalfH;
+      view.yMax = centerY + newHalfH;
+      drawPlot();
+    }
+
+    function resetPlotView() {
+      view.xMin = -5;
+      view.xMax = 5;
+      view.yMin = -4;
+      view.yMax = 6;
+      drawPlot();
+    }
+
+    // ==========================================================================
+    // CÁLCULO NUMÉRICO DEL ÁREA (REGLA DE SIMPSON 1/3 COMPUESTA)
+    // ==========================================================================
+    function computeArea() {
+      const fExpr = document.getElementById('funcF').value.trim();
+      const gExpr = document.getElementById('funcG').value.trim();
+      const a = parseFloat(document.getElementById('limitA').value);
+      const b = parseFloat(document.getElementById('limitB').value);
+
+      if (isNaN(a) || isNaN(b)) {
+        alert("Por favor ingresa límites numéricos válidos.");
+        return;
+      }
+
+      try {
+        compiledF = math.compile(fExpr);
+        compiledG = math.compile(gExpr);
+        currentFExpr = fExpr;
+        currentGExpr = gExpr;
+        currentA = a;
+        currentB = b;
+      } catch (err) {
+        alert("Error en la sintaxis matemática de una de las funciones: " + err.message);
+        return;
+      }
+
+      // Integración por Regla de Simpson Compuesta (N = 1000 subintervalos pares)
+      const N = 1000;
+      const minLim = Math.min(a, b);
+      const maxLim = Math.max(a, b);
+      const h = (maxLim - minLim) / N;
+
+      function diffAt(x) {
+        try {
+          const valF = compiledF.evaluate({ x: x });
+          const valG = compiledG.evaluate({ x: x });
+          return Math.abs(valF - valG); // Valor absoluto garantiza área geométrica
+        } catch (e) {
+          return 0;
+        }
+      }
+
+      let sum = diffAt(minLim) + diffAt(maxLim);
+      for (let i = 1; i < N; i++) {
+        const x_i = minLim + i * h;
+        const coef = (i % 2 === 0) ? 2 : 4;
+        sum += coef * diffAt(x_i);
+      }
+
+      const totalArea = (h / 3) * sum;
+
+      // Actualizar tarjeta de resultados
+      document.getElementById('areaDisplay').textContent = `${totalArea.toFixed(4)} u²`;
+      document.getElementById('resultDetails').textContent =
+        `Intervalo: [${minLim.toFixed(2)}, ${maxLim.toFixed(2)}] • Evaluado con Simpson 1/3 (N=1000)`;
+
+      // Ajustar vista del plano para encuadrar la región
+      adjustViewToArea(minLim, maxLim);
+      drawPlot();
+    }
+
+    function adjustViewToArea(a, b) {
+      const paddingX = Math.max(Math.abs(b - a) * 0.4, 2);
+      view.xMin = a - paddingX;
+      view.xMax = b + paddingX;
+
+      // Calcular rango Y en el intervalo
+      let minY = Infinity;
+      let maxY = -Infinity;
+      for (let i = 0; i <= 40; i++) {
+        const x = a + (i / 40) * (b - a);
+        try {
+          const yF = compiledF.evaluate({ x });
+          const yG = compiledG.evaluate({ x });
+          minY = Math.min(minY, yF, yG);
+          maxY = Math.max(maxY, yF, yG);
+        } catch (e) { }
+      }
+
+      if (isFinite(minY) && isFinite(maxY)) {
+        const paddingY = Math.max(Math.abs(maxY - minY) * 0.35, 2);
+        view.yMin = minY - paddingY;
+        view.yMax = maxY + paddingY;
+      }
+    }
+
+    // ==========================================================================
+    // DETECCIÓN AUTOMÁTICA DE INTERSECCIONES (Búsqueda de Raíces f(x)-g(x)=0)
+    // ==========================================================================
+    function detectIntersections() {
+      const fExpr = document.getElementById('funcF').value.trim();
+      const gExpr = document.getElementById('funcG').value.trim();
+
+      let cf, cg;
+      try {
+        cf = math.compile(fExpr);
+        cg = math.compile(gExpr);
+      } catch (e) {
+        alert("Error de sintaxis en las funciones.");
+        return;
+      }
+
+      function delta(x) {
+        return cf.evaluate({ x }) - cg.evaluate({ x });
+      }
+
+      // Escaneo en [-15, 15] con paso 0.05
+      const roots = [];
+      const scanStart = -15;
+      const scanEnd = 15;
+      const step = 0.05;
+
+      let prevX = scanStart;
+      let prevVal = delta(prevX);
+
+      for (let x = scanStart + step; x <= scanEnd; x += step) {
+        let curVal = delta(x);
+        if (isNaN(curVal) || !isFinite(curVal)) {
+          prevX = x;
+          continue;
+        }
+
+        // Cambio de signo -> raíz encontrada
+        if (prevVal * curVal <= 0) {
+          // Bisección para 5 decimales de precisión
+          let left = prevX;
+          let right = x;
+          for (let iter = 0; iter < 24; iter++) {
+            let mid = (left + right) / 2;
+            let midVal = delta(mid);
+            if (prevVal * midVal <= 0) {
+              right = mid;
+            } else {
+              left = mid;
+            }
+          }
+          const rootFound = parseFloat(((left + right) / 2).toFixed(4));
+          if (!roots.some(r => Math.abs(r - rootFound) < 0.05)) {
+            roots.push(rootFound);
+          }
+        }
+        prevX = x;
+        prevVal = curVal;
+      }
+
+      if (roots.length >= 2) {
+        roots.sort((a, b) => a - b);
+        document.getElementById('limitA').value = roots[0];
+        document.getElementById('limitB').value = roots[roots.length - 1];
+        alert(`Se detectaron ${roots.length} puntos de intersección: [${roots.join(', ')}]. Límites actualizados a a = ${roots[0]} y b = ${roots[roots.length - 1]}.`);
+        computeArea();
+      } else if (roots.length === 1) {
+        alert(`Se encontró un solo punto de tangencia o corte en x = ${roots[0]}. Se requieren al menos dos puntos para delimitar una región cerrada.`);
+      } else {
+        alert("No se detectaron intersecciones evidentes en el intervalo [-15, 15]. Por favor ingresa los límites manualmente.");
+      }
+    }
+
+    function applyPreset(f, g, a, b) {
+      document.getElementById('funcF').value = f;
+      document.getElementById('funcG').value = g;
+      document.getElementById('limitA').value = a;
+      document.getElementById('limitB').value = b;
+      computeArea();
+    }
+
+    // ==========================================================================
+    // CUESTIONARIO EVALUATIVO (QUIZ DE 5 PREGUNTAS)
+    // ==========================================================================
+    const quizData = [
+      {
+        q: 0,
+        correct: 1, // B
+        explanation: "Correcto: Cuando $f(x) \\ge g(x)$, el área se obtiene integrando la función techo menos la función piso: $\\int_a^b [f(x) - g(x)] dx$."
+      },
+      {
+        q: 1,
+        correct: 2, // C
+        explanation: "Correcto: $\\int_0^1 (x - x^2) dx = [\\frac{x^2}{2} - \\frac{x^3}{3}]_0^1 = \\frac{1}{2} - \\frac{1}{3} = \\frac{1}{6} \\text{ u}^2$."
+      },
+      {
+        q: 2,
+        correct: 1, // B
+        explanation: "Correcto: La integral directa calcula el área neta o con signo. Donde $f < g$, la integral aporta valor negativo que cancela el área positiva anterior."
+      },
+      {
+        q: 3,
+        correct: 0, // A
+        explanation: "Correcto: El método $dy$ es superior cuando las funciones se expresan fácilmente como $x = f(y)$ y los límites de la derecha e izquierda no cambian."
+      },
+      {
+        q: 4,
+        correct: 0, // A
+        explanation: "Correcto: $2 - x^2 = x \\implies x^2 + x - 2 = 0 \\implies (x+2)(x-1) = 0 \\implies x = -2$ y $x = 1$."
+      }
+    ];
+
+    let currentQIndex = 0;
+    let userAnswers = {};
+
+    function selectOption(qIndex, optIndex) {
+      userAnswers[qIndex] = optIndex;
+      const qBox = document.querySelector(`.quiz-question-box[data-q="${qIndex}"]`);
+      const options = qBox.querySelectorAll('.quiz-opt');
+
+      options.forEach((opt, idx) => {
+        opt.classList.remove('selected', 'correct', 'incorrect');
+        if (idx === optIndex) opt.classList.add('selected');
+      });
+
+      // Validar de inmediato
+      const feedback = document.getElementById(`feedback-${qIndex}`);
+      const isCorrect = (optIndex === quizData[qIndex].correct);
+
+      feedback.className = `quiz-feedback show ${isCorrect ? 'success' : 'error'}`;
+      feedback.innerHTML = isCorrect ?
+        `<strong>¡Correcto!</strong> ${quizData[qIndex].explanation}` :
+        `<strong>Respuesta Incorrecta.</strong> ${quizData[qIndex].explanation}`;
+
+      if (typeof renderMathInElement !== 'undefined') {
+        renderMathInElement(feedback, { delimiters: [{ left: '$', right: '$', display: false }] });
+      }
+
+      options[quizData[qIndex].correct].classList.add('correct');
+      if (!isCorrect) {
+        options[optIndex].classList.add('incorrect');
+      }
+
+      updateProgressBar();
+    }
+
+    function updateProgressBar() {
+      const answeredCount = Object.keys(userAnswers).length;
+      const pct = (answeredCount / quizData.length) * 100;
+      document.getElementById('quizProgressFill').style.width = `${pct}%`;
+    }
+
+    function showQuestion(index) {
+      const qBoxes = document.querySelectorAll('.quiz-question-box');
+      qBoxes.forEach(b => b.classList.remove('active'));
+      document.getElementById('quizFinalScreen').style.display = 'none';
+      document.getElementById('quizNavRow').style.display = 'flex';
+
+      qBoxes[index].classList.add('active');
+      currentQIndex = index;
+
+      document.getElementById('quizCounterText').textContent = `Pregunta ${index + 1} de ${quizData.length}`;
+      document.getElementById('quizPrevBtn').disabled = (index === 0);
+      document.getElementById('quizNextBtn').innerHTML = (index === quizData.length - 1) ?
+        'Ver Resultados <i data-lucide="check" style="width:16px; display:inline;"></i>' :
+        'Siguiente <i data-lucide="arrow-right" style="width:16px; display:inline;"></i>';
+      lucide.createIcons();
+    }
+
+    function nextQuestion() {
+      if (currentQIndex < quizData.length - 1) {
+        showQuestion(currentQIndex + 1);
+      } else {
+        finishQuiz();
+      }
+    }
+
+    function prevQuestion() {
+      if (currentQIndex > 0) {
+        showQuestion(currentQIndex - 1);
+      }
+    }
+
+    function finishQuiz() {
+      const qBoxes = document.querySelectorAll('.quiz-question-box');
+      qBoxes.forEach(b => b.classList.remove('active'));
+
+      let score = 0;
+      quizData.forEach((q, idx) => {
+        if (userAnswers[idx] === q.correct) score++;
+      });
+
+      document.getElementById('finalScoreDisplay').textContent = `${score}/${quizData.length}`;
+      const titleElem = document.getElementById('finalScoreTitle');
+      const msgElem = document.getElementById('finalScoreMsg');
+
+      if (score === 5) {
+        titleElem.textContent = "¡Sobresaliente! 100%";
+        msgElem.textContent = "Has demostrado un dominio impecable de los conceptos de áreas entre curvas, métodos dx/dy y resolución de integrales.";
+      } else if (score >= 3) {
+        titleElem.textContent = "¡Buen Trabajo!";
+        msgElem.textContent = "Comprendes los fundamentos principales del cálculo de áreas. Te recomendamos repasar los ejemplos paso a paso para perfeccionar tus resultados.";
+      } else {
+        titleElem.textContent = "Oportunidad de Mejora";
+        msgElem.textContent = "Revisa con atención el Marco Teórico y las gráficas interactivas para consolidar el método de identificación de curva superior e inferior.";
+      }
+
+      document.getElementById('quizFinalScreen').style.display = 'block';
+      document.getElementById('quizNavRow').style.display = 'none';
+    }
+
+    function restartQuiz() {
+      userAnswers = {};
+      document.querySelectorAll('.quiz-opt').forEach(opt => opt.classList.remove('selected', 'correct', 'incorrect'));
+      document.querySelectorAll('.quiz-feedback').forEach(f => {
+        f.className = 'quiz-feedback';
+        f.innerHTML = '';
+      });
+      document.getElementById('quizProgressFill').style.width = '0%';
+      showQuestion(0);
+    }
+
+    // ==========================================================================
+    // SECCIÓN 7: GESTIÓN DEL MATERIAL AUDIOVISUAL & REPRODUCTOR
+    // ==========================================================================
+    const academicVideo = document.getElementById('academicVideoPlayer');
+    const videoOverlay = document.getElementById('videoOverlay');
+    const videoStatusDot = document.getElementById('videoStatusDot');
+    const videoStatusText = document.getElementById('videoStatusText');
+
+    function updateVideoStatus(state, message) {
+      if (!videoStatusDot || !videoStatusText) return;
+      videoStatusDot.className = 'status-dot';
+      if (state === 'ready') {
+        videoStatusDot.classList.add('status-ready');
+        if (videoOverlay) videoOverlay.classList.add('hidden');
+      } else if (state === 'error') {
+        videoStatusDot.classList.add('status-error');
+        if (videoOverlay) videoOverlay.classList.remove('hidden');
+      } else {
+        videoStatusDot.classList.add('status-searching');
+      }
+      videoStatusText.textContent = message;
+    }
+
+    if (academicVideo) {
+      academicVideo.addEventListener('loadeddata', () => {
+        const dur = academicVideo.duration && isFinite(academicVideo.duration) ? ` (${Math.round(academicVideo.duration)}s)` : '';
+        updateVideoStatus('ready', 'Video listo para reproducir' + dur);
+      });
+
+      academicVideo.addEventListener('canplay', () => {
+        if (videoOverlay) videoOverlay.classList.add('hidden');
+      });
+
+      academicVideo.addEventListener('error', () => {
+        updateVideoStatus('error', 'No se pudo cargar el archivo video.mp4');
+        if (videoOverlay) videoOverlay.classList.remove('hidden');
+      });
+    }
+
+    // Reintentar cargar video.mp4 local con prevención de caché
+    function retryLocalVideo() {
+      if (!academicVideo) return;
+      updateVideoStatus('searching', 'Comprobando video.mp4 del proyecto...');
+      academicVideo.src = 'video.mp4?nocache=' + Date.now();
+      academicVideo.load();
+      academicVideo.play().then(() => {
+        updateVideoStatus('ready', 'Reproduciendo video explicativo');
+        if (videoOverlay) videoOverlay.classList.add('hidden');
+      }).catch(() => {
+        // En caso de que aún no se haya colocado el archivo
+      });
+    }
+
+    // Control de velocidad de reproducción
+    function setSpeed(rate, btn) {
+      if (!academicVideo) return;
+      academicVideo.playbackRate = rate;
+      document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+    }
+
+    // Pantalla completa
+    function toggleFullscreen() {
+      if (!academicVideo) return;
+      if (document.fullscreenElement) {
+        document.exitFullscreen().catch(() => {});
+      } else if (academicVideo.requestFullscreen) {
+        academicVideo.requestFullscreen().catch(() => {});
+      } else if (academicVideo.webkitRequestFullscreen) {
+        academicVideo.webkitRequestFullscreen();
+      }
+    }
+
+    // ==========================================================================
+    // SEGUIMIENTO DE SECCIÓN ACTIVA EN EL MENÚ SEGÚN EL SCROLL
+    // ==========================================================================
+    const sectionsToTrack = document.querySelectorAll('section[id]');
+    const allNavLinks = document.querySelectorAll('.nav-link');
+
+    window.addEventListener('scroll', () => {
+      let currentSectionId = '';
+      const scrollPos = window.scrollY + 140;
+
+      sectionsToTrack.forEach(section => {
+        const top = section.offsetTop;
+        const height = section.offsetHeight;
+        if (scrollPos >= top && scrollPos < top + height) {
+          currentSectionId = section.getAttribute('id');
+        }
+      });
+
+      if (currentSectionId) {
+        allNavLinks.forEach(link => {
+          if (link.getAttribute('href') === '#' + currentSectionId) {
+            link.classList.add('active');
+          } else {
+            link.classList.remove('active');
+          }
+        });
+      }
+    }, { passive: true });
+
+    // Inicialización al cargar la página
+    window.addEventListener('load', () => {
+      resizeCanvas();
+      computeArea();
+    });
+  </script>
+</body>
+
+</html>
