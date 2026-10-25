@@ -42,4 +42,36 @@ Para abrir y utilizar este portal en cualquier computadora:
    ```bash
    git clone https://github.com/Ericka1DiazMedrano/pagina-web.git
    ```
-2. Abre el archivo `index.html` en cualquier navegador web moderno (Google Chrome, Microsoft Edge, Firefox, etc.).
+2. Ejecuta el servidor localmente con Python:
+   ```bash
+   python server.py
+   ```
+   Luego abre en tu navegador `http://localhost:10000` (o abre directamente el archivo `index.html`).
+
+---
+
+## ☁️ Despliegue en Render (como Web Service)
+
+El proyecto está 100% configurado para desplegarse como un **Web Service** en [Render](https://render.com):
+
+### Opción 1: Despliegue Automático con Blueprint (Recomendado)
+1. Inicia sesión en tu cuenta de [Render.com](https://dashboard.render.com).
+2. Haz clic en el botón **New +** y selecciona **Blueprint**.
+3. Conecta tu repositorio `Ericka1DiazMedrano/pagina-web`.
+4. Render detectará automáticamente el archivo `render.yaml` y configurará todo de forma automática.
+5. Haz clic en **Apply** y tu aplicación estará en línea con HTTPS gratuito.
+
+### Opción 2: Creación Manual de Web Service
+Si prefieres crearlo manualmente:
+1. En el Dashboard de Render, haz clic en **New +** > **Web Service**.
+2. Conecta el repositorio `Ericka1DiazMedrano/pagina-web`.
+3. Completa los siguientes campos:
+   - **Name:** `pagina-web` (o el nombre que desees)
+   - **Language / Runtime:** `Python 3`
+   - **Branch:** `main`
+   - **Region:** Elige la más cercana (ej. `Oregon (US West)` o `Ohio (US East)`)
+   - **Build Command:** `pip install -r requirements.txt`
+   - **Start Command:** `python server.py`
+   - **Plan:** `Free`
+4. Haz clic en **Deploy Web Service**.
+

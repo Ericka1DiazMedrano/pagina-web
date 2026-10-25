@@ -1,0 +1,3 @@
+# Dependencias para Render Web Service
+# El servidor utiliza la biblioteca estándar de Python (ThreadingHTTPServer optimizado con soporte para streaming Range).
+# No se requieren paquetes externos pesados para garantizar un arranque ultra-rápido en Render.
